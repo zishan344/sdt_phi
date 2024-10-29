@@ -1,0 +1,9 @@
+Questions
+
+What is the difference between Data and Information
+Describe Primary Key, Composite Primary Key, Foreign Key with example
+Write five numeric type Data Types of MySQL
+Create a table named Employee with EmployeeId, EmployeeName, EmployeeSalary and JoiningDate
+Create table
+Insert 2 employee data
+Delete 1 employee data
