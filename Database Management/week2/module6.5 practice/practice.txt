@@ -1,0 +1,6 @@
+ 
+Questions
+Determine the third highest salary and which employee receives it?
+Determine the third lowest salary and which employee receives it?
+Which employee has been hired after Steven?
+With common table expression solve the question 1 and 2
