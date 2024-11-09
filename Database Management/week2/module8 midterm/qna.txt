@@ -1,0 +1,152 @@
+1. (mark: 5) Explain the difference between Primary Key and Foreign Key in SQL.
+
+Ans: primary key is set of filed in database table it's unique value stor and foreign key is reference of primary key 
+
+
+2.(mark: 5) What is a Self Join? Provide an example using the employees table to list employees who share the same manager ID, showing only their first names and manager IDs.
+
+Ans: self join is a sql query it's join itself. for example: SELECT m.First_name, e.employee_id
+FROM employees AS e
+JOIN employees AS m
+ON e.employee_id = m.manager_id;
+
+
+3.(mark: 20) Create a table of Employees which has the following fields
+Employee_Id
+First Name
+Last Name
+Date of Birth
+Department Id
+Salary
+
+Create a table Projects with the following fields:	
+Project ID
+Project Name
+Start Date
+End Date
+Budget
+
+Create a table Employee_Projects with the following fields:
+Employee ID	
+Project ID
+
+
+Ensure that each employee can work on multiple projects and a project can have multiple employees.
+
+Ans: 
+create table Employees (
+Employee_Id int primary key not null,
+FirstName varchar(50) NOT NULL,
+LastName varchar(50) NOT NULL,
+DateOfBirth date NOT NULL,
+DepartmentId char(4) NOT NULL,
+Salary int not null
+);
+
+CREATE TABLE Projects(
+ProjectID int primary key not null,
+ProjectName varchar(50) not null,
+StartDate date not null,
+EndDate date not null,
+Budget int not null
+);
+
+
+create table Employee_Projects (
+EmployeeID int not null,
+ProjectID int not null,
+foreign key (EmployeeID) references employees(Employee_Id),
+foreign key(projectID) references projects(ProjectID),
+PRIMARY KEY (EmployeeID, ProjectID)
+);
+
+
+
+4.(mark: 8) Using the dummydb, write an SQL query to get the third-highest salary in the employees table.
+Ans SELECT * FROM employees;
+SELECT MAX(salary) as highSalary FROM employees 
+where salary < (select  MAX(salary) as highSalary FROM employees
+where salary < (SELECT MAX(salary) as highSalary FROM employees));
+
+
+
+
+5.(mark: 10) Write a query to show the department names and the number of employees in each department.
+
+Ans: select  department_name, count(*) as members from employees 
+JOIN departments ON employees.department_id = departments.department_id 
+group by department_name;
+
+6.(mark: 14) Illustrate INNER JOIN, LEFT JOIN, RIGHT JOIN, and CROSS JOIN with examples using the employees and departments tables.
+
+Ans:
+* INNER JOIN: inner join is a sql query it's return common row when match both table column 
+
+example: SELECT departments.department_name, employees.employee_id
+FROM departments 
+INNER JOIN employees 
+ON departments.department_id = employees.department_id;
+
+* LEFT JOIN : left join is a sql query it's return all row from from left table and return matched row from right table.
+
+example: SELECT departments.department_name, employees.employee_id
+FROM departments 
+left JOIN employees 
+ON departments.department_id = employees.department_id;
+
+*Right JOIN : right join is a sql query it's return all row from  right table and return matched row form left table.
+
+example: SELECT departments.department_name, employees.employee_id
+FROM departments 
+right JOIN employees 
+ON departments.department_id = employees.department_id;
+
+CROSS JOIN : cross join is a sql query it's return all row both table  if not match any side value now worry it's return both side value 
+example: SELECT departments.department_name, employees.employee_id
+FROM departments 
+cross JOIN employees 
+ON departments.department_id = employees.department_id;
+
+
+7.(mark: 8)  What is a Common Table Expression (CTE)? Write an example query using CTE to show the names of employees whose salary is higher than the average salary.
+
+Ans:A Common Table Expression (CTE) is a temporary result set. It is defined using the WITH keyword 
+example: WITH AverageSalary AS (
+    SELECT AVG(salary) AS avg_salary
+    FROM employees
+)
+SELECT first_name
+FROM employees
+WHERE salary > (SELECT avg_salary FROM AverageSalary);
+
+
+8.(mark: 10) Write a query to display the names of employees who earn a salary less than the employee "Steven King".
+
+WITH lessEarnSteven AS (
+    SELECT salary AS steven_salary
+    FROM employees where employee_id = 100
+    -- or we can use it : SELECT salary AS steven_salary
+   -- FROM employees where first_name ='Steven' AND last_name = 'King'
+)
+SELECT *
+FROM employees
+WHERE salary < (SELECT steven_salary FROM lessEarnSteven);
+
+
+
+9.(mark: 10) Write a query to find the department names and the names of the managers for each department.
+ANS: SELECT departments.department_name, employees.first_name
+FROM departments JOIN employees 
+ON departments.manager_id = employees.manager_id;
+
+
+10.(mark: 10) Write a query to display the names of all cities where departments are located. 
+SELECT  departments.department_name, locations.city
+FROM locations JOIN departments 
+WHERE locations.location_id = departments.location_id;
+
+
+
+
+
+
