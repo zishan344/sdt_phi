@@ -1,9 +1,45 @@
 Questions
 
 What is the difference between Data and Information
-Describe Primary Key, Composite Primary Key, Foreign Key with example
+
+ans :
+data is not follow any order but Information is follow structure in order. 
+collecting data combination create a well Information
+
+
+Describe Primary Key, Composite Primary Key, Foreign Key with example.
+ans:
+1. primary key is unique value on table. 
+2. combination 2 or more columns on database table that uniquely identify each row. 
+3. if i use any primary key in another table column that is Foreign key.
+
+
 Write five numeric type Data Types of MySQL
+ans:
+1. integer
+2. date
+3. double
+5. SMALLINT 
+6. decimal
+
 Create a table named Employee with EmployeeId, EmployeeName, EmployeeSalary and JoiningDate
 Create table
 Insert 2 employee data
 Delete 1 employee data
+
+ans:
+create table Employee(
+EmployeeId int primary key,
+EmployeeName varchar(50),
+EmployeeSalary double,
+JoiningDate date
+);
+
+insert into Employee 
+(EmployeeId,EmployeeName,EmployeeSalary,JoiningDate) values (1,"Rocky",1000,"2012-12-31");
+
+insert into Employee 
+(EmployeeId,EmployeeName,EmployeeSalary,JoiningDate) values (2,"rony",1000,"2012-12-30");
+
+delete from Employee where EmployeeId = 1;
+

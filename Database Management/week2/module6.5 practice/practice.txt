@@ -1,6 +1,45 @@
  
 Questions
-Determine the third highest salary and which employee receives it?
-Determine the third lowest salary and which employee receives it?
-Which employee has been hired after Steven?
-With common table expression solve the question 1 and 2
+1 Determine the third highest salary and which employee receives it?
+ans: 
+WITH thirdMAXSal AS (
+    SELECT MAX(salary) AS sal
+    FROM employees 
+    WHERE salary < (
+        SELECT MAX(salary) 
+        FROM employees 
+        WHERE salary < (
+            SELECT MAX(salary) 
+            FROM employees
+        )
+    )
+)
+select * from employees where salary =(SELECT sal AS third_highest_salary
+FROM thirdMAXSal);
+
+
+
+2 Determine the third lowest salary and which employee receives it?
+ans: WITH thirdMINSal AS (
+    SELECT MIN(salary) AS sal
+    FROM employees 
+    WHERE salary > (
+        SELECT MIN(salary) 
+        FROM employees 
+        WHERE salary > (
+            SELECT MIN(salary) 
+            FROM employees
+        )
+    )
+)
+select * from employees where salary =(SELECT sal AS third_minimum_salary
+FROM thirdMINSal);
+
+
+3 Which employee has been hired after Steven?
+ans: WITH Steven AS (
+SELECT hire_date AS h_date FROM employees where employee_id = 100
+) SELECT * FROM employees WHERE hire_date > (SELECT h_date FROM Steven);
+
+4 condition With common table expression solve the question 1 and 2
+ solved done
