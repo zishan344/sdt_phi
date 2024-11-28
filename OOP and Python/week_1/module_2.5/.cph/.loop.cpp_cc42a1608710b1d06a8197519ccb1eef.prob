@@ -1,0 +1,1 @@
+{"name":"Local: loop","url":"e:\\Learning\\Phitron\\SDT\\OOP and Python\\week_1\\module_2.5\\loop.cpp","tests":[{"id":1732807444987,"input":"1\n4\n20 1 9 4","output":"7"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\Learning\\Phitron\\SDT\\OOP and Python\\week_1\\module_2.5\\loop.cpp","group":"local","local":true}
