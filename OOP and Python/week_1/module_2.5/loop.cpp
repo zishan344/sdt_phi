@@ -1,28 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+int fib(int n)
+{
+  if (n == 1)
+    return 0;
+  else if (n == 2)
+    return 1;
+  return fib(n - 1) + fib(n - 2);
+}
 int main()
 {
-  int t;
-  cin >> t;
-  while (t--)
-  {
-    int n;
-    cin >> n;
-    int arr[n];
-    for (int i = 0; i < n; i++)
-    {
-      cin >> arr[i];
-    };
-
-    for (int i = 0; i < n; i++)
-    {
-      for (int j = i + 1; j < n; j++)
-      {
-        cout << arr[i] << "," << arr[j] << endl;
-      }
-    }
-  }
-
+  int val;
+  cin >> val;
+  cout << fib(val);
   return 0;
 }
