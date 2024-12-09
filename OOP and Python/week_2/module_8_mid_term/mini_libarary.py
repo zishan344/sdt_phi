@@ -64,21 +64,24 @@ while(True):
   print('2. Borrow Book')
   print('3. Return Book')
   print('4. Exit.')
-  val = int(input("Enter your choice: "))
-  if val == 1:
-       Book.view_book_info(Book)
-  elif val == 2:
-     try :
-       Book.borrow_book(Book,int(input('enter your book id to borrow: ')))
-     except ValueError as e:
-       print(f'{e}')
-  elif val == 3:
-     try:
-      Book.return_book(Book,int(input('enter your book id to return: ')))
-     except ValueError as e:
-       print(f'{e}')
-  
-  elif val == 4:
-    break
-  else:
-    print(f'Invalid input. please choice 1 to 4')
+  try:
+   val = int(input("Enter your choice: "))
+   if val == 1:
+        Book.view_book_info(Book)
+   elif val == 2:
+      try :
+        Book.borrow_book(Book,int(input('enter your book id to borrow: ')))
+      except ValueError as e:
+        print(f'{e}')
+   elif val == 3:
+      try:
+       Book.return_book(Book,int(input('enter your book id to return: ')))
+      except ValueError as e:
+        print(f'{e}')
+   
+   elif val == 4:
+     break
+   else:
+     print(f'Invalid input. please choice 1 to 4')
+  except ValueError:
+    print(f'Invalid input. Please enter a valid integer choice.')
