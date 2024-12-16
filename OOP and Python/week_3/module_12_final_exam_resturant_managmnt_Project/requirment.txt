@@ -1,0 +1,33 @@
+
+admin class requirement:
+1. Can create and manage the restaurant  enu (add/remove items).
+
+2. Can add a new customer account by providing name, email, and address. (done)
+
+3. Can view all customer accounts (list of registered customers).(done)
+
+4. Can remove a customer account from the system.(done)
+
+5. Can view and modify the restaurant's menu (add/remove items, update prices). (done)
+
+
+
+customer class requirement
+1. Can create an account with name, email, and address (done)
+2. Can view the restaurant's menu (list of food and drinks available)(done)
+3. Can place an order by selecting food items from the menu. (done)
+4. Can check available balance before placing an order.(done)
+5. Can view a list of past orders.(done)
+6. Can add funds to their balance.(done)
+
+
+
+restaurant class requirements:
+1. Manages the restaurant menu (list of food items with prices) (done)
+2. Manages customer accounts (list of customers in the system). (done)
+3. Can show the menu, add/remove items from the menu, and check customer details. (done)
+4. Provides a replica of the menu for customers to view and for admins to manage.
+
+
+
+
