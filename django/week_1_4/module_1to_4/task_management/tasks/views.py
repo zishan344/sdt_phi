@@ -24,3 +24,6 @@ def test(request):
 
 def showTask(request):
   return HttpResponse("<h2>Show Task</h2>")
+
+def create_task(request):
+  return render(request,"task_form.html")
