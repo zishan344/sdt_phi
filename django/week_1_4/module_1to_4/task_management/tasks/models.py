@@ -1,7 +1,4 @@
 from django.db import models
-
-# Create your models here.
-
 class Employee(models.Model):
   name = models.CharField(max_length=100)
   email = models.EmailField(unique=True)
@@ -10,15 +7,23 @@ class Employee(models.Model):
 
 
 class Task(models.Model):
+  STATUS_CHOICES = [
+    ('PENDING', 'PENDING'),
+    ('IN_PROGRESS', 'IN_PROGRESS'),
+    ('COMPLETED', 'COMPLETED')
+  ]
   project = models.ForeignKey("Project", on_delete = models.CASCADE,default=1)
   assigned_to = models.ManyToManyField(Employee)
-  # newString = models.models.CharField( max_length=250,default='' )
   title = models.CharField(max_length=250)
   description = models.TextField()
   due_date = models.DateField()
+  status = models.CharField(max_length=15,choices = STATUS_CHOICES,default ="PENDING")
   is_complete = models.BooleanField(default=False)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
+
+  def __str__(self):
+    return self.title
 
 
 class TaskDetail(models.Model):
@@ -30,13 +35,21 @@ class TaskDetail(models.Model):
     (MEDIUM,'Medium'),
     (LOW,'Low'),
   )
+  std_id = models.CharField(max_length=200,primary_key=True)
   task = models.OneToOneField(Task,on_delete=models.CASCADE,related_name='details')
   assigned_to = models.CharField(max_length=100)
   priority = models.CharField(
     max_length = 1, choices =PRIORITY_CHOICES, default = LOW
     )
-  # notes = models.models.TextField(blank=True, null=True)
+  notes = models.TextField(blank=True, null=True)
+  def __init__(self):
+    return f"Details form Task {self.task.title}"
+
+
 
 class Project(models.Model):
-  name = models.CharField(max_length = 100)
+  name = models.CharField(max_length=255)
+  description = models.TextField()
   start_date = models.DateField()
+  def __init__(self):
+    return self.name
