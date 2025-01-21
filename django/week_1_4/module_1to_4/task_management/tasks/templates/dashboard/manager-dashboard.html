@@ -19,6 +19,11 @@
       <div class="flex items-center gap-2">
         <div class="w-2 h-2 rounded-full bg-green-500"></div>
         <span>{{task.title}}</span>
+        <a href='{% url "update-task" task.id %}'>Edit</a>
+        <form action="{% url "delete-task" task.id %}" method='POST'>
+          {% csrf_token %}
+          <button type='submit' class="bg-red-400 py-1">Delete</button>
+        </form>
       </div>
       <div>
         <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm"
