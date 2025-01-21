@@ -13,7 +13,7 @@ class Task(models.Model):
     ('COMPLETED', 'COMPLETED')
   ]
   project = models.ForeignKey("Project", on_delete = models.CASCADE,default=1)
-  assigned_to = models.ManyToManyField(Employee)
+  assigned_to = models.ManyToManyField(Employee,related_name='tasks')
   title = models.CharField(max_length=250)
   description = models.TextField()
   due_date = models.DateField()
@@ -42,7 +42,7 @@ class TaskDetail(models.Model):
     max_length = 1, choices =PRIORITY_CHOICES, default = LOW
     )
   notes = models.TextField(blank=True, null=True)
-  def __init__(self):
+  def __str__(self):
     return f"Details form Task {self.task.title}"
 
 
@@ -51,5 +51,5 @@ class Project(models.Model):
   name = models.CharField(max_length=255)
   description = models.TextField()
   start_date = models.DateField()
-  def __init__(self):
+  def __str__(self):
     return self.name

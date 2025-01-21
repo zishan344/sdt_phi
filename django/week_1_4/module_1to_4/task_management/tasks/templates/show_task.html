@@ -8,13 +8,42 @@
 </head>
 <body>
   <div>
-    {% for task in tasks %}
-      <p>{{task}}</p>
+    {% comment %} TODO {% endcomment %}
+     <h1 class="font-bold size-4">This is task 1 data</h1>
+    {% for task1 in tasks1 %}
+      <p>{{task1}}</p>
+      <p class="my-2">{{task1.priority}}</p>
+
     {% endfor %}
   </div>
-
   <div>
-   single Task:-  {{task_3}}
+    <h1 class="font-bold size-4">This is task 2 data</h1>
+
+    {% comment %} TODO {% endcomment %}
+    {% for task2 in tasks2 %}
+      <p>{{task2}}</p>
+      <p class="my-2">{{task2.priority}}</p>
+
+    {% endfor %}
   </div>
+  <div>
+    <h1 class="font-bold size-4">This is task 3 data</h1>
+
+    {% comment %} TODO {% endcomment %}
+    {% for task3 in tasks3 %}
+      <p>{{task3}}</p>
+      <p class="my-2">{{task3.priority}}</p>
+
+    {% endfor %}
+  </div>
+    
+  <div>
+    <h1 class="font-bold size-4">This is task 4 data</h1>
+
+    {% comment %} TODO {% endcomment %}
+     {{tasks4}}
+  </div>
+    
+   
 </body>
 </html>
