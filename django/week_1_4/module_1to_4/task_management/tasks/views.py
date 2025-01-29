@@ -14,6 +14,7 @@ def home(request):
   return render(request, 'dashboard/manager_dashboard.html')
 def user_dashboard(request):
   return render(request, 'dashboard/user_dashboard.html') """
+  # this is new test command
 def manager_dashboard(request):
   # tasks = Task.objects.all()
   type = request.GET.get('type','all')
