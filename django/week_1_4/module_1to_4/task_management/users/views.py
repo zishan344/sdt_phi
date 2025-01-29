@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from users.form import RegisterForm
+from users.form import RegisterForm,CustomRegistrationForm
 from django.contrib.auth.models import User
 
 def sign_up(request):
