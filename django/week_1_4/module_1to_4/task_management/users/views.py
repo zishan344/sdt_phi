@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 def sign_up(request):
     if request.method == "POST":
-        form = RegisterForm(request.POST)
+        form = CustomRegistrationForm(request.POST)
         if form.is_valid():
           # username = form.cleaned_data.get('username')
           # password = form.cleaned_data.get('password1')
@@ -18,6 +18,6 @@ def sign_up(request):
         else:
           print("Form is not valid")
     else:
-        form = RegisterForm()
+        form = CustomRegistrationForm()
 
     return render(request, 'registration/register.html', {"form": form})

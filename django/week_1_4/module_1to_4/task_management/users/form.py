@@ -18,6 +18,7 @@ class CustomRegistrationForm(forms.ModelForm):
   password1 = forms.CharField(widget = forms.PasswordInput)
   confirm_password = forms.CharField(widget = forms.PasswordInput)
   class Meta:
+    model = User
     fields = [
       'username','first_name','last_name','password1','confirm_password','email'
     ]
@@ -47,9 +48,11 @@ class CustomRegistrationForm(forms.ModelForm):
   def clean(self):
     cleaned_data = super().clean()
     password1 = cleaned_data.get('password1')
-    confirm_password1 = cleaned_data.get('confirm_password1')
+    confirm_password = cleaned_data.get('confirm_password1')
     if password1 and confirm_password and password1 != confirm_password1:
       raise forms.ValidationError("Password do not match")
     return cleaned_data
+
+
 
 
