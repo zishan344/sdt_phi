@@ -26,7 +26,6 @@ def manager_dashboard(request):
   # completed_task = Task.objects.filter(status="COMPLETED").count()
   # in_progress_task = Task.objects.filter(status="IN_PROGRESS").count()
   # pending_task = Task.objects.filter(status="PENDING").count()
-   
   counts = Task.objects.aggregate(
     total= Count('id'),
     completed= Count('id',filter=Q(status="COMPLETED")),

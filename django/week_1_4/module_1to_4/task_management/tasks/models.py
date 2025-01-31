@@ -46,7 +46,7 @@ class TaskDetail(models.Model):
     )
     task = models.OneToOneField(
         Task,
-        on_delete=models.CASCADE,
+        on_delete=models.DO_NOTHING,
         related_name='details',
     )
     # assigned_to = models.CharField(max_length=100)
