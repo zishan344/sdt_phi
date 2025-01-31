@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from users.form import RegisterForm,CustomRegistrationForm
 from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate, logout
 
 def sign_up(request):
     if request.method == "POST":
@@ -21,3 +22,22 @@ def sign_up(request):
         form = CustomRegistrationForm()
 
     return render(request, 'registration/register.html', {"form": form})
+
+def sign_in (request):
+  if request.method == 'POST':
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    user =authenticate(username=username, password=password)
+    if user is not None:
+      login(request,user)
+      return redirect('home')
+    else:
+      return render(request,'registration/login.html',{
+        'error':'Invalid username or password'
+      })
+  return render(request,'registration/login.html')
+  
+def sign_out(request):
+  if request.method == 'POST':
+    logout(request)
+    return redirect('sign-in')
