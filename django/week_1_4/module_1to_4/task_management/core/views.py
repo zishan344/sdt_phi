@@ -6,3 +6,6 @@ from django.shortcuts import render, redirect
 
 def home (request):
   return render(request, 'homes.html')
+
+def no_permission (request):
+  return render(request, 'no_permission.html')
