@@ -12,9 +12,12 @@ def is_manager(user):
   return user.groups.filter(name='Manager').exists()
 
 def is_employee(user):
-  return user.groups.filter(name='Manager').exists()
+  return user.groups.filter(name='Employee').exists()
+def is_admin(user):
+  return user.groups.filter(name='Admin').exists()
 
   # this is new test command
+
 @user_passes_test(is_manager)
 def manager_dashboard(request):
   # tasks = Task.objects.all()
@@ -176,3 +179,14 @@ def dashboard(request):
   elif is_admin(request.user):
     return redirect('admin-dashboard')
   return redirect('no-permission')
+
+@permission_required("tasks.view_task",login_url='no-permission')
+def task_details(request,task_id):
+  task = Task.objects.get(id=task_id)
+  status_choices = Task.STATUS_CHOICES
+  if request.method == 'POST':
+    selected_status = request.POST.get('task_status')
+    task.status = selected_status
+    task.save()
+    return redirect('task-details', task.id)
+  return render(request,'task_details.html',{'task':task, 'status_choices':status_choices})
