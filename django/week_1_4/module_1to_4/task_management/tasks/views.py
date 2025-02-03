@@ -166,3 +166,13 @@ def delete_task(request,id):
   else:
     messages.error(request,'Something went wrong')
     return redirect('manager-dashboard')
+
+@login_required
+def dashboard(request):
+  if is_manager(request):
+    return redirect('manager-dashboard')
+  elif is_employee(request.user):
+    return redirect('user-dashboard')
+  elif is_admin(request.user):
+    return redirect('admin-dashboard')
+  return redirect('no-permission')

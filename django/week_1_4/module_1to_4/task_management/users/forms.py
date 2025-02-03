@@ -55,9 +55,9 @@ class CustomRegistrationForm(forms.ModelForm):
     return cleaned_data
 
 
-class LoginForm(StyledFormMixin,AuthenticationForm):
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
+class LoginForm(StyledFormMixin, AuthenticationForm):
+    def __init__(self, *arg, **kwargs):
+        super().__init__(*arg, **kwargs)
 
 class AssignRoleForm(StyledFormMixin,forms.Form):
   role = forms.ModelChoiceField(
