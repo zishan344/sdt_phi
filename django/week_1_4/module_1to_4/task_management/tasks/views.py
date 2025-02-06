@@ -72,7 +72,7 @@ def create_task(request):
   # form = TaskForm(employees=employees) #From Get
   if request.method == "POST":
     task_form = TaskModelForm(request.POST)
-    task_detail_form = TaskDetailModelForm(request.POST)
+    task_detail_form = TaskDetailModelForm(request.POST,request.FILES)
     if task_form.is_valid() and task_detail_form.is_valid():
       # for model form
       task = task_form.save()
@@ -143,7 +143,7 @@ def update_task(request,id):
     task_detail_form = TaskDetailModelForm(instance=task.details)
   if request.method == 'POST':
     task_form = TaskModelForm(request.POST,instance=task)
-    task_detail_form = TaskDetailModelForm(request.POST,instance=task.details)
+    task_detail_form = TaskDetailModelForm(request.POST,request.FILES,instance=task.details)
     
     if task_form.is_valid() and task_detail_form.is_valid():
       task = task_form.save()
