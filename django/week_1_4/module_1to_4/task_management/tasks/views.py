@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from tasks.forms import TaskForm,TaskModelForm,TaskDetailModelForm
-from tasks.models import Task, Employee, TaskDetail
+from tasks.models import Task, TaskDetail
 from datetime import date
 from django.db.models import Q,Count
 from django.contrib import messages
@@ -66,7 +66,7 @@ def showTask(request):
 @login_required
 @permission_required("tasks.add_task",login_url='no-permission')
 def create_task(request):
-  employees = Employee.objects.all()
+  # employees = Employee.objects.all()
   task_form = TaskModelForm() #From Get
   task_detail_form = TaskDetailModelForm()
   # form = TaskForm(employees=employees) #From Get
@@ -172,21 +172,26 @@ def delete_task(request,id):
 
 @login_required
 def dashboard(request):
-  if is_manager(request):
-    return redirect('manager-dashboard')
-  elif is_employee(request.user):
-    return redirect('user-dashboard')
-  elif is_admin(request.user):
-    return redirect('admin-dashboard')
-  return redirect('no-permission')
 
-@permission_required("tasks.view_task",login_url='no-permission')
-def task_details(request,task_id):
-  task = Task.objects.get(id=task_id)
-  status_choices = Task.STATUS_CHOICES
-  if request.method == 'POST':
-    selected_status = request.POST.get('task_status')
-    task.status = selected_status
-    task.save()
-    return redirect('task-details', task.id)
-  return render(request,'task_details.html',{'task':task, 'status_choices':status_choices})
+    return redirect('manager-dashboard')
+  # if is_manager(request):
+  # elif is_employee(request.user):
+  #   return redirect('user-dashboard')
+  # elif is_admin(request.user):
+  #   return redirect('admin-dashboard')
+  # return redirect('no-permission')
+
+# @permission_required("tasks.view_task",login_url='no-permission')
+def task_details(request, task_id):
+    print(task_id)
+    task = Task.objects.get(id=task_id)
+    status_choices = Task.STATUS_CHOICES
+
+    if request.method == 'POST':
+        selected_status = request.POST.get('task_status')
+        print(selected_status)
+        task.status = selected_status
+        task.save()
+        return redirect('task-details', task.id)
+
+    return render(request, 'task_details.html', {"task": task, 'status_choices': status_choices})
