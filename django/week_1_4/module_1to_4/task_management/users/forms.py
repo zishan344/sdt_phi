@@ -58,12 +58,16 @@ class CustomRegistrationForm(forms.ModelForm):
 class LoginForm(StyledFormMixin, AuthenticationForm):
     def __init__(self, *arg, **kwargs):
         super().__init__(*arg, **kwargs)
+        self.apply_styled_widgets()
 
 class AssignRoleForm(StyledFormMixin,forms.Form):
   role = forms.ModelChoiceField(
     queryset = Group.objects.all(),
     empty_label = "Select a Role"
   )
+  def __init__(self, *arg, **kwargs):
+    super().__init__(*arg, **kwargs)
+    self.apply_styled_widgets()
 
 
 class CreateGroupForm(StyledFormMixin,forms.ModelForm):
@@ -76,4 +80,7 @@ class CreateGroupForm(StyledFormMixin,forms.ModelForm):
   class Meta:
     model = Group
     fields = ['name','permissions']
+  def __init__(self, *arg, **kwargs):
+    super().__init__(*arg, **kwargs)
+    self.apply_styled_widgets()
 

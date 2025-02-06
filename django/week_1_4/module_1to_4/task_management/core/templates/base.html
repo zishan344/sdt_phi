@@ -34,31 +34,23 @@
 
     <script>
       document
-        .getElementById("menu-toggle")
-        .addEventListener("click", function () {
-          document.getElementById("mobile-menu").classList.toggle("hidden");
-        });
+      .getElementById("menu-toggle")
+      .addEventListener("click", function () {
+        document.getElementById("mobile-menu").classList.toggle("hidden");
+      });
+
+    document
+      .getElementById("user-menu-button")
+      .addEventListener("click", function () {
+        document.getElementById("user-menu").classList.toggle("hidden");
+      });
+
+    // Close the dropdown when clicking outside
+    window.addEventListener("click", function (e) {
+      if (!document.getElementById("user-menu-button").contains(e.target)) {
+        document.getElementById("user-menu").classList.add("hidden");
+      }
+    });
     </script>
   </body>
 </html>
-
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <h1>Welcome home</h1>
-  {% if user.is_authenticated %}
-      {{user}}
-      <form action="{% url 'sign-out' %}" method="POST">
-          {% csrf_token %}
-          <button type="submit">logout</button>
-      </form>
-  {% else %}
-      Annonymous
-  {% endif %}
-</body>
-</html> {% endcomment %}

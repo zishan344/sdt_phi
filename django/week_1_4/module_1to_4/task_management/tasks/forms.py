@@ -29,6 +29,11 @@ class StyledFormMixin:
           'class':self.default_classes,
           'placeholder':f"Enter {field.label.lower()}"
         })
+      elif isinstance(field.widget, forms.PasswordInput):
+        field.widget.attrs.update({
+          'class':self.default_classes,
+          'placeholder':f"Enter {field.label.lower()}"
+        })
       elif isinstance(field.widget,forms.SelectDateWidget):
         field.widget.attrs.update({
           "class":"border-2 border-gray-300 rounded-lg shadow-sm focus:border-rose-500 focus:ring-rose-500",

@@ -7,20 +7,11 @@ from django.db.models import Q,Count
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test,login_required,permission_required
 from django.contrib.auth.models import User
+from users.views import is_admin, is_manager, is_employee
 
-def is_manager(user):
-  return user.groups.filter(name='Manager').exists()
-
-def is_employee(user):
-  return user.groups.filter(name='Employee').exists()
-def is_admin(user):
-  return user.groups.filter(name='Admin').exists()
-
-  # this is new test command
 
 @user_passes_test(is_manager)
 def manager_dashboard(request):
-  # tasks = Task.objects.all()
   type = request.GET.get('type','all')
   tasks = Task.objects.select_related('details').prefetch_related('assigned_to').all()
   counts = Task.objects.aggregate(
@@ -66,10 +57,8 @@ def showTask(request):
 @login_required
 @permission_required("tasks.add_task",login_url='no-permission')
 def create_task(request):
-  # employees = Employee.objects.all()
   task_form = TaskModelForm() #From Get
   task_detail_form = TaskDetailModelForm()
-  # form = TaskForm(employees=employees) #From Get
   if request.method == "POST":
     task_form = TaskModelForm(request.POST)
     task_detail_form = TaskDetailModelForm(request.POST,request.FILES)
@@ -113,13 +102,6 @@ def view_task(request):
   print("tasks =: ",tasks)
   for task in tasks:
     print(task.assigned_to.all())
-  """
-  tasks = Task.objects.select_related('project').all()
-  for task in tasks:
-    print(task.project.name)
-
-  """
-  
   
 
 
@@ -172,14 +154,14 @@ def delete_task(request,id):
 
 @login_required
 def dashboard(request):
-
+  if is_admin(request.user):
+    return redirect('admin-dashboard')
+  elif is_manager(request.user):
     return redirect('manager-dashboard')
-  # if is_manager(request):
-  # elif is_employee(request.user):
-  #   return redirect('user-dashboard')
-  # elif is_admin(request.user):
-  #   return redirect('admin-dashboard')
-  # return redirect('no-permission')
+  elif is_employee(request.user):
+    return redirect('user-dashboard')
+  return redirect('no-permission')
+
 
 # @permission_required("tasks.view_task",login_url='no-permission')
 def task_details(request, task_id):

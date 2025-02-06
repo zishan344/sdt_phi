@@ -9,6 +9,11 @@ from users.forms import LoginForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Prefetch
 
+def is_manager(user):
+  return user.groups.filter(name='Manager').exists()
+
+def is_employee(user):
+  return user.groups.filter(name='Employee').exists()
 def is_admin(user):
   return user.groups.filter(name='Admin').exists()
 
