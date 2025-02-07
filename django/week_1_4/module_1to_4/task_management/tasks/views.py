@@ -8,8 +8,22 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test,login_required,permission_required
 from django.contrib.auth.models import User
 from users.views import is_admin, is_manager, is_employee
+from django.views import View
 
+# class based view test
+class MyView(View):
+  def get(self,request):
+    #view logic
+    return HttpResponse("Response successfully")
 
+class GreetingView(View):
+  greeting = "Good Day" # Class attribute
+  def get(self,request):
+    # class Attribute 'greeting' ব্যবহার
+    return HttpResponse(self.greeting)
+
+class MorningGreetingView(GreetingView):
+  greeting="Morning to ya" # subclass এ 'greeting' পরিবর্তন করা
 @user_passes_test(is_manager)
 def manager_dashboard(request):
   type = request.GET.get('type','all')
@@ -102,11 +116,7 @@ def view_task(request):
   print("tasks =: ",tasks)
   for task in tasks:
     print(task.assigned_to.all())
-  
-
-
   # use prefetch related fun
-  
   return render(request,"show_task.html",{
     'tasks1':tasks1,
     'tasks2':tasks2,
