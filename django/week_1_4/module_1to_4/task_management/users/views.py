@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from users.forms import RegisterForm,CustomRegistrationForm,CustomPasswordChangeForm
+from users.forms import RegisterForm,CustomRegistrationForm,CustomPasswordChangeForm,CustomPasswordResetForm
 from django.contrib.auth.models import User,Group
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -8,7 +8,10 @@ from django.contrib.auth.tokens import default_token_generator
 from users.forms import LoginForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Prefetch
-from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView
+from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView,PasswordResetView
+from django.urls import reverse_lazy
+
+
 
 def is_manager(user):
   return user.groups.filter(name='Manager').exists()
@@ -67,6 +70,22 @@ class ChangePassword(PasswordChangeView):
   template_name = "accounts/password_change.html"
   form_class = CustomPasswordChangeForm
 
+class CustomPasswordResetView(PasswordResetView):
+  form_class = CustomPasswordResetForm
+  template_name = 'registration/reset_password.html'
+  success_url = reverse_lazy('sign-in')
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['protocol']='https'if self.request.is_secure() else 'http'
+    context['domain'] = self.request.get_host()
+    print(context)
+    return context
+  def form_valid(self,form):
+    messages.success(
+      self.request, 'A Reset email set. Please check your email inbox or spam folder'
+    )
+    return super().form_valid(form)
+
 class ProfileView(TemplateView):
   template_name = 'accounts/profile.html'
   def get_context_data(self,**kwargs):
@@ -78,6 +97,7 @@ class ProfileView(TemplateView):
     context['member_since'] = user.date_joined
     context['last_login'] = user.last_login
     return context
+
 
 @login_required
 def sign_out(request):

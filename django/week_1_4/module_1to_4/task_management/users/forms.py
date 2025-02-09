@@ -4,7 +4,9 @@ from django import forms
 import re
 from django.contrib.auth.models import User
 from tasks.forms import StyledFormMixin
-from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
+
+
 class RegisterForm(UserCreationForm):
   class Meta:
     model = User
@@ -63,6 +65,11 @@ class LoginForm(StyledFormMixin, AuthenticationForm):
 
 class CustomPasswordChangeForm(StyledFormMixin, PasswordChangeForm):
   def __init__(self, *arg, **kwargs):
+        super().__init__(*arg, **kwargs)
+        self.apply_styled_widgets()
+
+class CustomPasswordResetForm(StyledFormMixin, PasswordResetForm):
+    def __init__(self, *arg, **kwargs):
         super().__init__(*arg, **kwargs)
         self.apply_styled_widgets()
 
