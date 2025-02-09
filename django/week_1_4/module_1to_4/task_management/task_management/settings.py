@@ -156,4 +156,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-LOGIN_URL = "http://127.0.0.1:8000/users/sign-in/"
+LOGIN_URL = "/users/sign-in/"
+LOGIN_REDIRECT_URL = '/'
