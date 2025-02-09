@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from users.forms import RegisterForm,CustomRegistrationForm
+from users.forms import RegisterForm,CustomRegistrationForm,CustomPasswordChangeForm
 from django.contrib.auth.models import User,Group
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -8,7 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from users.forms import LoginForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Prefetch
-from django.contrib.auth.views import LoginView,TemplateView
+from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView
 
 def is_manager(user):
   return user.groups.filter(name='Manager').exists()
@@ -62,6 +62,10 @@ class CustomLoginForm(LoginView):
   def get_success_url(self):
     next_url = self.request.GET.get('next')
     return next_url if next_url else super().get_success_url()
+
+class ChangePassword(PasswordChangeView):
+  template_name = "accounts/password_change.html"
+  form_class = CustomPasswordChangeForm
 
 class ProfileView(TemplateView):
   template_name = 'accounts/profile.html'
