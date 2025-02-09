@@ -8,7 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from users.forms import LoginForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Prefetch
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView,TemplateView
 
 def is_manager(user):
   return user.groups.filter(name='Manager').exists()
@@ -63,7 +63,17 @@ class CustomLoginForm(LoginView):
     next_url = self.request.GET.get('next')
     return next_url if next_url else super().get_success_url()
 
-
+class ProfileView(TemplateView):
+  template_name = 'accounts/profile.html'
+  def get_context_data(self,**kwargs):
+    context = super().get_context_data(**kwargs)
+    user = self.request.user
+    context['username'] = user.username
+    context['email'] = user.email
+    context['name'] = user.get_full_name()
+    context['member_since'] = user.date_joined
+    context['last_login'] = user.last_login
+    return context
 
 @login_required
 def sign_out(request):
