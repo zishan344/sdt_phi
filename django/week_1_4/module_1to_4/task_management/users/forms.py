@@ -68,6 +68,12 @@ class CustomPasswordChangeForm(StyledFormMixin, PasswordChangeForm):
         super().__init__(*arg, **kwargs)
         self.apply_styled_widgets()
 
+class CustomPasswordResetConfirmForm(StyledFormMixin, SetPasswordForm):
+    def __init__(self, *arg, **kwargs):
+        super().__init__(*arg, **kwargs)
+        self.apply_styled_widgets()
+
+
 class CustomPasswordResetForm(StyledFormMixin, PasswordResetForm):
     def __init__(self, *arg, **kwargs):
         super().__init__(*arg, **kwargs)

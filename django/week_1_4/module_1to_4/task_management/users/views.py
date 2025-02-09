@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from users.forms import RegisterForm,CustomRegistrationForm,CustomPasswordChangeForm,CustomPasswordResetForm
+from users.forms import RegisterForm,CustomRegistrationForm,CustomPasswordChangeForm,CustomPasswordResetForm, CustomPasswordResetConfirmForm
 from django.contrib.auth.models import User,Group
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -8,7 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from users.forms import LoginForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Prefetch
-from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView,PasswordResetView
+from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView,PasswordResetView, PasswordResetConfirmView
 from django.urls import reverse_lazy
 
 
@@ -83,6 +83,16 @@ class CustomPasswordResetView(PasswordResetView):
   def form_valid(self,form):
     messages.success(
       self.request, 'A Reset email set. Please check your email inbox or spam folder'
+    )
+    return super().form_valid(form)
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+  form_class = CustomPasswordResetConfirmForm
+  template_name = 'registration/reset_password.html'
+  success_url = reverse_lazy('sign-in')
+  def form_valid(self,form):
+    messages.success(
+      self.request, 'Password reset successfully'
     )
     return super().form_valid(form)
 
