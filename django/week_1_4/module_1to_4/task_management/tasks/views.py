@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from tasks.forms import TaskForm,TaskModelForm,TaskDetailModelForm
-from tasks.models import Task, TaskDetail
+from tasks.models import Task, TaskDetail, Project
 from datetime import date
 from django.db.models import Q,Count
 from django.contrib import messages
@@ -12,6 +12,7 @@ from users.views import is_admin, is_manager, is_employee
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.base import ContextMixin 
+from django.views.generic import ListView,DetailView
 # from functools import reduce
 
 
@@ -228,3 +229,32 @@ def task_details(request, task_id):
         return redirect('task-details', task.id)
 
     return render(request, 'task_details.html', {"task": task, 'status_choices': status_choices})
+
+class TakDetails(DetailView):
+    model = Task
+    template_name = "task_details.html"
+    context_object_name = 'task'
+    pk_url_kwarg = 'task_id'
+
+    def get_context_data(self,**kwargs):
+      context = super().get_context_data(**kwargs)
+      context['status_choices'] = Task.STATUS_CHOICES
+      return context
+    
+    def post(self, request, *args, **kwargs):
+      task = self.get_object()
+      selected_status = request.POST.get('task_status')
+      task.status = selected_status
+      task.save()
+      return redirect('task-details', task.id)
+
+
+class ViewProject(ListView):
+  model = Project
+  context_object_name = 'projects'
+  template_name = 'show_task_2nd.html'
+  def get_queryset(self):
+    queryset = Project.objects.annotate(
+      num_task=Count('task')
+    ).order_by('num_task')
+    return queryset
