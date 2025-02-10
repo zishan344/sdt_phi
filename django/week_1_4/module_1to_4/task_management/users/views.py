@@ -103,12 +103,15 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 class ProfileView(TemplateView):
   template_name = 'accounts/profile.html'
-  def get_context_data(self,**kwargs):
+  def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
     user = self.request.user
     context['username'] = user.username
     context['email'] = user.email
     context['name'] = user.get_full_name()
+    context['bio'] = user.bio
+    context['profile_image'] = user.profile_image
+
     context['member_since'] = user.date_joined
     context['last_login'] = user.last_login
     return context
@@ -144,7 +147,7 @@ class EditProfileView(UpdateView):
  """
 
 
-class EditProfileView(UpdateView):
+""" class EditProfileView(UpdateView):
   model  = User
   form_class = EditProfileForm
   template_name = 'accounts/update_profile.html'
@@ -155,8 +158,20 @@ class EditProfileView(UpdateView):
   
   def form_valid(self,form):
     form.save()
-    return redirect('profile')
+    return redirect('profile') """
 
+class EditProfileView(UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = 'accounts/update_profile.html'
+    context_object_name = 'form'
+
+    def get_object(self):
+        return self.request.user
+
+    def form_valid(self, form):
+        form.save()
+        return redirect('profile')
 
 @login_required
 def sign_out(request):

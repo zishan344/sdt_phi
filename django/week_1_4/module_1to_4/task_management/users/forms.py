@@ -5,8 +5,10 @@ import re
 # from django.contrib.auth.models import User
 from tasks.forms import StyledFormMixin
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
+from .models import CustomUser
 from django.contrib.auth import get_user_model
 User = get_user_model()
+
 class RegisterForm(UserCreationForm):
   class Meta:
     model = User
@@ -119,7 +121,7 @@ class CreateGroupForm(StyledFormMixin,forms.ModelForm):
     super().__init__(*arg, **kwargs)
     self.apply_styled_widgets()
 
-
+""" 
 class EditProfileForm(StyledFormMixin, forms.ModelForm):
   class Meta: 
     model = User
@@ -150,3 +152,8 @@ class EditProfileForm(StyledFormMixin, forms.ModelForm):
       user.save()
     return user
 
+"""
+class EditProfileForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'first_name', 'last_name', 'bio', 'profile_image']
