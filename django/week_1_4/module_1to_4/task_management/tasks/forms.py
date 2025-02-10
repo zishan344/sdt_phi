@@ -15,8 +15,10 @@ class TaskForm(forms.Form):
     self.fields['assigned_to'].choices =[(emp.id, emp.name) for emp in employees]
 class StyledFormMixin:
   """ Mixin to apply style form field """
+  def __init__(self, *arg, **kwarg):
+        super().__init__(*arg, **kwarg)
+        self.apply_styled_widgets()
   default_classes ="border-2 border-gray-300 w-full rounded-lg shadow-sm focus:border-rose-500 focus:ring-rose-500"
-  
   def apply_styled_widgets(self):
     for field_name, field in self.fields.items():
       if isinstance(field.widget,forms.TextInput):
