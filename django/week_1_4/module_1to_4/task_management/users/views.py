@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from users.forms import RegisterForm,CustomRegistrationForm,CustomPasswordChangeForm,CustomPasswordResetForm, CustomPasswordResetConfirmForm, EditProfileForm
-from django.contrib.auth.models import User,Group
+from django.contrib.auth.models import Group
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from users.forms import LoginForm
@@ -12,7 +12,9 @@ from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView,
 from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 
-from .models import UserProfile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 def is_manager(user):
@@ -111,7 +113,7 @@ class ProfileView(TemplateView):
     context['last_login'] = user.last_login
     return context
 
-
+""" 
 class EditProfileView(UpdateView):
   model = User
   form_class = EditProfileForm
@@ -138,6 +140,23 @@ class EditProfileView(UpdateView):
   def form_valid(self,form):
     form.save(commit = True)
     return redirect('profile')
+
+ """
+
+
+class EditProfileView(UpdateView):
+  model  = User
+  form_class = EditProfileForm
+  template_name = 'accounts/update_profile.html'
+  context_object_name = 'form'
+
+  def get_object(self):
+    return self.request.user
+  
+  def form_valid(self,form):
+    form.save()
+    return redirect('profile')
+
 
 @login_required
 def sign_out(request):
