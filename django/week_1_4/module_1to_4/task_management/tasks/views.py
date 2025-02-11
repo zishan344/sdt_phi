@@ -30,6 +30,8 @@ class GreetingView(View):
 
 class MorningGreetingView(GreetingView):
   greeting="Morning to ya" # subclass এ 'greeting' পরিবর্তন করা
+
+
 @user_passes_test(is_manager)
 def manager_dashboard(request):
   type = request.GET.get('type','all')
@@ -58,20 +60,16 @@ def manager_dashboard(request):
   }
   return render(request, "dashboard/manager-dashboard.html",context)
 
+#Todo should convert cbv manager dashboard 
+
 @user_passes_test(is_employee)
 def employee_dashboard(request):
     return render(request, "dashboard/user-dashboard.html")
 
-def test(request):
-  context={
-    "para":{
-      "lorem ipsum dolor sit amet, consectetur adipiscing"
-    }
-  }
-  return render(request, "test.html",context)
+#Todo should convert cbv manager dashboard 
 
-def showTask(request):
-  return HttpResponse("<h2>Show Task</h2>")
+
+
 
 @login_required
 @permission_required("tasks.add_task",login_url='no-permission')
@@ -92,7 +90,6 @@ def create_task(request):
 
   context = {"task_form": task_form,"task_detail_form":task_detail_form}
   return render(request,"task_form.html",context)
-
 
 # @method_decorator(login_required,name='dispatch')
 # @method_decorator(permission_required("tasks.add_task",login_url='no-permission'),name='dispatch')
@@ -166,6 +163,9 @@ def view_task(request):
     'tasks4':tasks4,
 
   })
+
+#Todo should convert cbv view task 
+
 
 @login_required
 @permission_required("tasks.change_task",login_url='no-permission')
@@ -242,6 +242,8 @@ def delete_task(request,id):
   else:
     messages.error(request,'Something went wrong')
     return redirect('manager-dashboard')
+
+#Todo should convert cbv delete task 
 
 @login_required
 def dashboard(request):

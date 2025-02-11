@@ -37,6 +37,8 @@ def activate_user(request,user_id, token):
   except User.DoesNotExist:
       return HttpResponse('User not found')
 
+
+#* starting view functions and classes
 def sign_up(request):
     if request.method == "POST":
         form = CustomRegistrationForm(request.POST)
@@ -116,50 +118,6 @@ class ProfileView(TemplateView):
     context['last_login'] = user.last_login
     return context
 
-""" 
-class EditProfileView(UpdateView):
-  model = User
-  form_class = EditProfileForm
-  template_name = 'accounts/update_profile.html'
-  context_object_name = 'form'
-
-  def get_object(self):
-    return self.request.user
-  
-  def get_form_kwargs(self):
-    kwargs = super().get_form_kwargs()
-    kwargs['userprofile']=UserProfile.objects.get(user = self.request.user)
-    return kwargs
-  
-  def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    user_profile = UserProfile.objects.get(user=self.request.user)
-    print('views',user_profile)
-    context['form'] = self.form_class(
-      instance = self.object, userprofile = user_profile
-    )
-    return context
-  
-  def form_valid(self,form):
-    form.save(commit = True)
-    return redirect('profile')
-
- """
-
-
-""" class EditProfileView(UpdateView):
-  model  = User
-  form_class = EditProfileForm
-  template_name = 'accounts/update_profile.html'
-  context_object_name = 'form'
-
-  def get_object(self):
-    return self.request.user
-  
-  def form_valid(self,form):
-    form.save()
-    return redirect('profile') """
-
 class EditProfileView(UpdateView):
     model = User
     form_class = EditProfileForm
@@ -205,6 +163,10 @@ def assign_role(request,user_id):
       return redirect('admin-dashboard')
   return render(request,'admin/assign_role.html',{'form':form})
 @user_passes_test(is_admin,login_url='no-permission')
+
+#Todo should convert cbv assign role 
+
+
 def create_group(request):
   form = CreateGroupForm()
   if request.method == 'POST':
@@ -216,7 +178,12 @@ def create_group(request):
       return redirect('create-group')
   return render(request, 'admin/create_group.html', {'form': form})
 
+#Todo should convert cbv create group
+
+
 @user_passes_test(is_admin,login_url='no-permission')
 def group_list(request):
   groups = Group.objects.prefetch_related('permissions').all()
   return render(request, 'admin/group_list.html',{'groups':groups})
+
+#Todo should convert cbv group list
