@@ -9,7 +9,7 @@ from users.forms import LoginForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Prefetch
 from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView,PasswordResetView, PasswordResetConfirmView
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse_lazy
 
 from django.contrib.auth import get_user_model
@@ -166,7 +166,7 @@ def assign_role(request,user_id):
 
 #Todo should convert cbv assign role 
 
-
+@user_passes_test(is_admin,login_url='no-permission')
 def create_group(request):
   form = CreateGroupForm()
   if request.method == 'POST':
@@ -179,7 +179,18 @@ def create_group(request):
   return render(request, 'admin/create_group.html', {'form': form})
 
 #Todo should convert cbv create group
-
+class CreateGroup(CreateView):
+  model = Group
+  form_class = CreateGroupForm
+  template_name ='admin/create_group.html'
+  success_url = reverse_lazy('create-group')
+  """ def get_success_url(self):
+        return self.request.path
+  def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "New Group created successfully")
+        return response """
+      
 
 @user_passes_test(is_admin,login_url='no-permission')
 def group_list(request):
