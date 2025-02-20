@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from users.forms import RegisterForm,CustomRegistrationForm,CustomPasswordChangeForm,CustomPasswordResetForm, CustomPasswordResetConfirmForm, EditProfileForm
 from django.contrib.auth.models import Group
 from django.contrib.auth import login, authenticate, logout
@@ -9,8 +9,11 @@ from users.forms import LoginForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Prefetch
 from django.contrib.auth.views import LoginView,TemplateView,PasswordChangeView,PasswordResetView, PasswordResetConfirmView
-from django.views.generic import UpdateView, CreateView, View
+from django.views.generic import UpdateView, CreateView, View, ListView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin, PermissionRequiredMixin
+from django.views.generic.edit import FormView
+
 
 from django.contrib.auth import get_user_model
 
@@ -149,52 +152,40 @@ def admin_dashboard(request):
       user.group_name = 'No Group Assigned'
   return render(request, 'admin/dashboard.html',{"users":users})
 
-@user_passes_test(is_admin,login_url='no-permission')
-def assign_role(request,user_id):
-  user = User.objects.get(id = user_id)
-  form = AssignRoleForm()
-  if request.method == 'POST':
-    form = AssignRoleForm(request.POST)
-    if form.is_valid():
-      role = form.cleaned_data.get('role')
-      user.groups.clear() # remove old roles
-      user.groups.add(role)
-      messages.success(request,f"User {user.username} has been assigned to {role.name} role")
-      return redirect('admin-dashboard')
-  return render(request,'admin/assign_role.html',{'form':form})
-@user_passes_test(is_admin,login_url='no-permission')
-
 #Todo should convert cbv assign role 
+class AssignRole(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    login_url = 'sign-in'
+    permission_required = "auth.change_group"
+    form_class = AssignRoleForm
+    template_name = 'admin/assign_role.html'
+    success_url = reverse_lazy('dashboard')
 
-@user_passes_test(is_admin,login_url='no-permission')
-def create_group(request):
-  form = CreateGroupForm()
-  if request.method == 'POST':
-    form = CreateGroupForm(request.POST)
-    
-    if form.is_valid():
-      group = form.save()
-      messages.success(request, f"Group {group.name} has been created successfully")
-      return redirect('create-group')
-  return render(request, 'admin/create_group.html', {'form': form})
+    def form_valid(self, form):
+        user = get_object_or_404(User, id=self.kwargs['user_id'])  # Fetch user
+        role = form.cleaned_data.get('role')
+        user.groups.clear()  # Remove old roles
+        user.groups.add(role)  # Assign new role
+        messages.success(self.request, f"User {user.username} has been assigned to {role.name} role")
+        return super().form_valid(form)
 
 #Todo should convert cbv create group
-class CreateGroup(CreateView):
+class CreateGroup(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
+  login_url = 'sign-in'
+  permission_required ="auth.add_group"
   model = Group
   form_class = CreateGroupForm
   template_name ='admin/create_group.html'
   success_url = reverse_lazy('create-group')
-  """ def get_success_url(self):
-        return self.request.path
   def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, "New Group created successfully")
-        return response """
-      
+        return response
 
-@user_passes_test(is_admin,login_url='no-permission')
-def group_list(request):
-  groups = Group.objects.prefetch_related('permissions').all()
-  return render(request, 'admin/group_list.html',{'groups':groups})
 
 #Todo should convert cbv group list
+class GroupListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    login_url = 'no-permission'
+    permission_required = "auth.view_group"
+    model = Group
+    template_name = 'admin/group_list.html'
+    context_object_name = 'groups'

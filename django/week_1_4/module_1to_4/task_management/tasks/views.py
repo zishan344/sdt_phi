@@ -10,9 +10,11 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from users.views import is_admin, is_manager, is_employee
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin, PermissionRequiredMixin
 from django.views.generic.base import ContextMixin 
-from django.views.generic import ListView,DetailView,UpdateView
+from django.views.generic import ListView,DetailView,UpdateView,TemplateView,DeleteView
+from django.urls import reverse_lazy
+
 # from functools import reduce
 
 
@@ -61,15 +63,55 @@ def manager_dashboard(request):
   return render(request, "dashboard/manager-dashboard.html",context)
 
 #Todo should convert cbv manager dashboard 
+class ManagerDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    login_url = 'sign-in'
+    model = Task
+    template_name = "dashboard/manager-dashboard.html"
+    context_object_name = "tasks"
+
+    def test_func(self):
+        return is_manager(self.request.user)
+
+    def get_queryset(self):
+        task_type = self.request.GET.get("type", "all")
+        base_query = Task.objects.select_related("details").prefetch_related("assigned_to")
+
+        if task_type == "completed":
+            return base_query.filter(status="COMPLETED")
+        elif task_type == "in_progress":
+            return base_query.filter(status="IN_PROGRESS")
+        elif task_type == "pending":
+            return base_query.filter(status="PENDING")
+        return base_query.all()  # Default: Show all tasks
+
+    def get_context_data(self, **kwargs):
+        """Add aggregated task counts to context."""
+        context = super().get_context_data(**kwargs)
+        context["counts"] = Task.objects.aggregate(
+            total=Count("id"),
+            completed=Count("id", filter=Q(status="COMPLETED")),
+            in_progress=Count("id", filter=Q(status="IN_PROGRESS")),
+            pending=Count("id", filter=Q(status="PENDING")),
+        )
+        return context
 
 @user_passes_test(is_employee)
 def employee_dashboard(request):
     return render(request, "dashboard/user-dashboard.html")
 
-#Todo should convert cbv manager dashboard 
+#Todo should convert cbv employee dashboard 
 
+class EmployeeDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    login_url = "sign-in"
+    template_name = "dashboard/user-dashboard.html"
 
+    def test_func(self):
+        return is_employee(self.request)
 
+create_decorators = [
+    login_required,
+    permission_required("tasks.add_task", login_url='no-permission')
+]
 
 @login_required
 @permission_required("tasks.add_task",login_url='no-permission')
@@ -91,14 +133,6 @@ def create_task(request):
   context = {"task_form": task_form,"task_detail_form":task_detail_form}
   return render(request,"task_form.html",context)
 
-# @method_decorator(login_required,name='dispatch')
-# @method_decorator(permission_required("tasks.add_task",login_url='no-permission'),name='dispatch')
-
-create_decorators = [
-    login_required,
-    permission_required("tasks.add_task", login_url='no-permission')
-]
-
 # @method_decorator(create_decorators, name="dispatch")
 class CreateTask(ContextMixin,LoginRequiredMixin,PermissionRequiredMixin,View):
     permission_required = 'tasks.add_task'
@@ -116,16 +150,26 @@ class CreateTask(ContextMixin,LoginRequiredMixin,PermissionRequiredMixin,View):
         return render(request,self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        task_form = TaskModelForm(request.POST)
-        task_detail_form = TaskDetailModelForm(request.POST, request.FILES)
-        if task_form.is_valid() and task_detail_form.is_valid():
-            task = task_form.save()
-            task_detail = task_detail_form.save(commit=False)
-            task_detail.task = task
-            task_detail.save()
-            messages.success(request, "Task Created Successfully")
-            context = self.get_context_data(task_form = task_form,task_detail_form=task_detail_form)
-            return render(request,self.template_name,context)
+      task_form = TaskModelForm(request.POST)
+      task_detail_form = TaskDetailModelForm(request.POST, request.FILES)
+
+      if task_form.is_valid() and task_detail_form.is_valid():
+        task = task_form.save(commit=False) 
+        project_id = request.POST.get("project") 
+        try:
+            task.project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            messages.error(request, "Invalid project selected.")
+            return self.get(request, *args, **kwargs)
+
+        task.save()
+
+        task_detail = task_detail_form.save(commit=False)
+        task_detail.task = task
+        task_detail.save()
+
+        messages.success(request, "Task Created Successfully")
+        return redirect("create-task")
 
 @login_required
 @permission_required("tasks.view_task",login_url='no-permission')
@@ -165,7 +209,45 @@ def view_task(request):
   })
 
 #Todo should convert cbv view task 
+class TaskListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    login_url = "no-permission"
+    permission_required = "tasks.view_task"
+    model = Task
+    template_name = "show_task.html"
+    context_object_name = "tasks" 
 
+    def get_queryset(self):
+        queryset = Task.objects.prefetch_related("assigned_to").all()
+        print("tasks =", queryset)
+
+        # Retrieve task with "paper" in the title
+        tasks1 = queryset.filter(title__icontains="paper")
+
+        # Retrieve tasks containing 'c' and status is 'PENDING'
+        tasks2 = queryset.filter(title__icontains="c", status="PENDING")
+
+        # Retrieve tasks that are PENDING or IN_PROGRESS
+        tasks3 = queryset.filter(Q(status="PENDING") | Q(status="IN_PROGRESS"))
+
+        # Check if a task with an invalid status exists
+        tasks4 = queryset.filter(status="adfsdskfd").exists()
+
+        for task in queryset:
+            print(task.assigned_to.all())
+
+        return queryset 
+
+    def get_context_data(self, **kwargs):
+        
+        context = super().get_context_data(**kwargs)
+        queryset = Task.objects.prefetch_related("assigned_to").all()
+
+        context["tasks1"] = queryset.filter(title__icontains="paper")
+        context["tasks2"] = queryset.filter(title__icontains="c", status="PENDING")
+        context["tasks3"] = queryset.filter(Q(status="PENDING") | Q(status="IN_PROGRESS"))
+        context["tasks4"] = queryset.filter(status="adfsdskfd").exists()
+        
+        return context
 
 @login_required
 @permission_required("tasks.change_task",login_url='no-permission')
@@ -229,21 +311,22 @@ class UpdateTask(UpdateView):
       return redirect('update-task',self.object.id)
 
 
-
-
-@login_required
-@permission_required("tasks.delete_task",login_url='no-permission')
-def delete_task(request,id):
-  if request.method == "POST":
-    task = Task.objects.get(id=id)
-    task.delete()
-    messages.success(request,'Task Deleted Successfully')
-    return redirect('manager-dashboard')
-  else:
-    messages.error(request,'Something went wrong')
-    return redirect('manager-dashboard')
-
 #Todo should convert cbv delete task 
+class TaskDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    login_url = "sign-in"
+    permission_required = "tasks.delete_task"
+    model = Task
+    success_url = reverse_lazy("manager-dashboard")
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        if task:
+            messages.success(self.request, "Task Deleted Successfully")
+            return super().post(request, *args, **kwargs)
+        else:
+            messages.error(self.request, "Something went wrong")
+            return redirect("manager-dashboard")
+
 
 @login_required
 def dashboard(request):
@@ -254,22 +337,6 @@ def dashboard(request):
   elif is_employee(request.user):
     return redirect('user-dashboard')
   return redirect('no-permission')
-
-
-# @permission_required("tasks.view_task",login_url='no-permission')
-def task_details(request, task_id):
-    print(task_id)
-    task = Task.objects.get(id=task_id)
-    status_choices = Task.STATUS_CHOICES
-
-    if request.method == 'POST':
-        selected_status = request.POST.get('task_status')
-        print(selected_status)
-        task.status = selected_status
-        task.save()
-        return redirect('task-details', task.id)
-
-    return render(request, 'task_details.html', {"task": task, 'status_choices': status_choices})
 
 class TakDetails(DetailView):
     model = Task
