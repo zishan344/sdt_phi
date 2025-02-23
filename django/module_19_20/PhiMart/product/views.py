@@ -11,6 +11,13 @@ from product.serializers import ProductSerializer
 
 def view_specific_category(request):
   pass
+
+@api_view()
+def view_products(request):
+  products = Product.objects.select_related('category').all()
+  serializer = ProductSerializer(products, many=True)
+  return Response(serializer.data)
+
 @api_view()
 def view_specific_product(request,pk):
   product = get_object_or_404(Product, pk=pk)
