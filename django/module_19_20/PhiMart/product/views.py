@@ -24,7 +24,7 @@ def view_specific_category(request, pk):
   serializer = CategorySerializer(category)
   return Response(serializer.data)
 
-@api_view(["GET","POST"])
+@api_view(["GET", "POST"])
 def view_products(request):
   """
   Handles GET and POST requests for products.
@@ -42,8 +42,23 @@ def view_products(request):
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@api_view()
+@api_view(['GET','PUT','DELETE'])
 def view_specific_product(request,pk):
-  product = get_object_or_404(Product, pk=pk)
-  serializer = ProductSerializer(product)
-  return Response(serializer.data)
+  if request.method == 'GET':
+    product = get_object_or_404(Product, pk=pk)
+    serializer = ProductSerializer(product)
+    return Response(serializer.data)
+  elif request.method == 'PUT':
+    product = get_object_or_404(Product, pk=pk)
+    serializer = ProductSerializer(product,data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
+  elif request.method == 'DELETE':
+    product = get_object_or_404(Product, pk=pk)
+    serializer = ProductSerializer(product)
+    product.delete()
+    return Response(serializer.data,status=status.HTTP_204_NO_CONTENT)
+
+
+  
