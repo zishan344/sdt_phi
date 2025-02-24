@@ -9,7 +9,7 @@ from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 
 # Create your views here.
-@api_view()
+@api_view(['GET'])
 def view_categories(request):
   categories = Category.objects.annotate(
     product_count = Count('products')).all()
@@ -24,11 +24,23 @@ def view_specific_category(request, pk):
   serializer = CategorySerializer(category)
   return Response(serializer.data)
 
-@api_view()
+@api_view(["GET","POST"])
 def view_products(request):
-  products = Product.objects.select_related('category').all()
-  serializer = ProductSerializer(products, many=True)
-  return Response(serializer.data)
+  """
+  Handles GET and POST requests for products.
+  
+  GET: Returns a list of all products.
+  POST: Creates a new product with the provided data.
+  """
+  if request.method == "GET":
+    products = Product.objects.select_related('category').all()
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
+  elif request.method == "POST":
+    serializer = ProductSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view()
 def view_specific_product(request,pk):
