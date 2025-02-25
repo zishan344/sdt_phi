@@ -8,7 +8,9 @@ from django.shortcuts import get_object_or_404
 from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
+# import messages
+
 # Create your views here.
 """ @api_view(['GET'])
 def view_categories(request):
@@ -90,12 +92,31 @@ def view_products(request):
 class ProductList(ListCreateAPIView):
   queryset = Product.objects.select_related('category').all()
   serializer_class = ProductSerializer
-"""   def get_queryset(self):
+  """def get_queryset(self):
     return Product.objects.select_related('category').all()
 
   def get_serializer_class(self):
     return ProductSerializer """
   
+
+class ProductDetails(RetrieveUpdateDestroyAPIView):
+  queryset = Product.objects.all()
+  serializer_class = ProductSerializer
+  
+  """ override delete method """
+  def delete(self,request,pk):
+    product = get_object_or_404(Product,pk=pk)
+    if product.stock > 10:
+      return Response({
+        "message": "Product with stock more than 10 could not be deleted"
+      })
+    product.delete()
+    return Response({
+      "message": "Product deleted successfully"
+    },status=status.HTTP_204_NO_CONTENT)
+    
+  """ if not write pk should be need at this time lookup_field """
+  # lookup_field = 'id'
 
 class ViewSpecificProduct(APIView):
   def get(self, request, pk):
