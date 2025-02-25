@@ -9,7 +9,9 @@ from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
-# import messages
+from rest_framework.viewsets import ModelViewSet
+# import ModelViewSet
+
 
 # Create your views here.
 """ @api_view(['GET'])
@@ -118,6 +120,28 @@ class ProductDetails(RetrieveUpdateDestroyAPIView):
   """ if not write pk should be need at this time lookup_field """
   # lookup_field = 'id'
 
+class CategoryViewSet(ModelViewSet):
+  queryset = Category.objects.annotate(
+    product_count=Count('products')
+  ).all()
+  serializer_class = CategorySerializer
+
+
+class ProductViewSet(ModelViewSet):
+  queryset = Product.objects.all()
+  serializer_class = ProductSerializer
+  
+  def destroy(self, request, *args, **kwargs):
+    product = self.get_object()
+    if product.stock > 10:
+      return Response({
+        "message": "Product with stock more than 10 could not be deleted"
+      })
+    self.perform_destroy(product)
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+""" 
 class ViewSpecificProduct(APIView):
   def get(self, request, pk):
     product = get_object_or_404(Product,pk=pk)
@@ -136,6 +160,8 @@ class ViewSpecificProduct(APIView):
     product.delete()
     serializer = ProductSerializer(copy_of_product)
     return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+ """
 """ 
 @api_view(['GET','PUT','DELETE'])
 def view_specific_product(request,pk):
