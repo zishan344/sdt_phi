@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from product.models import Category, Product
+from product.models import Category, Product,Review
 from django.shortcuts import get_object_or_404
-from product.serializers import ProductSerializer, CategorySerializer
+from product.serializers import ProductSerializer, CategorySerializer,ReviewSerializer
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
@@ -91,34 +91,38 @@ def view_products(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 """
-class ProductList(ListCreateAPIView):
-  queryset = Product.objects.select_related('category').all()
-  serializer_class = ProductSerializer
-  """def get_queryset(self):
-    return Product.objects.select_related('category').all()
 
-  def get_serializer_class(self):
-    return ProductSerializer """
+
+# class ProductList(ListCreateAPIView):
+#   queryset = Product.objects.select_related('category').all()
+#   serializer_class = ProductSerializer
+#   """def get_queryset(self):
+#     return Product.objects.select_related('category').all()
+
+#   def get_serializer_class(self):
+#     return ProductSerializer """
   
 
-class ProductDetails(RetrieveUpdateDestroyAPIView):
-  queryset = Product.objects.all()
-  serializer_class = ProductSerializer
+# class ProductDetails(RetrieveUpdateDestroyAPIView):
+#   queryset = Product.objects.all()
+#   serializer_class = ProductSerializer
   
-  """ override delete method """
-  def delete(self,request,pk):
-    product = get_object_or_404(Product,pk=pk)
-    if product.stock > 10:
-      return Response({
-        "message": "Product with stock more than 10 could not be deleted"
-      })
-    product.delete()
-    return Response({
-      "message": "Product deleted successfully"
-    },status=status.HTTP_204_NO_CONTENT)
+#   # """ override delete method """
+#   def delete(self,request,pk):
+#     product = get_object_or_404(Product,pk=pk)
+#     if product.stock > 10:
+#       return Response({
+#         "message": "Product with stock more than 10 could not be deleted"
+#       })
+#     product.delete()
+#     return Response({
+#       "message": "Product deleted successfully"
+#     },status=status.HTTP_204_NO_CONTENT)
     
-  """ if not write pk should be need at this time lookup_field """
-  # lookup_field = 'id'
+#   # """ if not write pk should be need at this time lookup_field """
+#   # lookup_field = 'id'
+
+
 
 class CategoryViewSet(ModelViewSet):
   queryset = Category.objects.annotate(
@@ -140,6 +144,14 @@ class ProductViewSet(ModelViewSet):
     self.perform_destroy(product)
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class ReviewViewSet(ModelViewSet):
+  serializer_class = ReviewSerializer
+  def get_queryset(self):
+      return Review.objects.filter(product_id=self.kwargs['product_pk'])
+  def get_serializer_context(self):
+    return {'product_id':self.kwargs['product_pk']}
+  
 
 """ 
 class ViewSpecificProduct(APIView):
