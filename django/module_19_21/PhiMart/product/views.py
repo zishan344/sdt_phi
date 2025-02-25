@@ -9,14 +9,14 @@ from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
 # Create your views here.
-@api_view(['GET'])
+""" @api_view(['GET'])
 def view_categories(request):
   categories = Category.objects.annotate(
     product_count = Count('products')).all()
   serializer = CategorySerializer(categories, many=True)
-  return Response(serializer.data)
+  return Response(serializer.data) """
 
-class ViewCategory(APIView):
+class ViewCategorys(APIView):
   def get(self, request):
     categories = Category.objects.annotate(product_count = Count('products')).all()
     serializer = CategorySerializer(categories, many=True)
@@ -35,14 +35,30 @@ class ViewSpecificCategory(APIView):
   ).get(pk=pk)
     serializer = CategorySerializer(category)
     return Response(serializer.data)
+  def put(self,request,pk):
+    category = get_object_or_404(Category.objects.annotate(product_count=Count('products')),
+    pk=pk)
+    serializer = CategorySerializer(category,data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
+  def delete(self, request, pk):
+    category = get_object_or_404(
+      Category.objects.annotate(product_count=Count('products')),
+      pk=pk
+    )
+    copy_of_category = category
+    category.delete()
+    serializer = CategorySerializer(copy_of_category)
+    return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
-@api_view()
+""" @api_view()
 def view_specific_category(request, pk):
   category = Category.objects.annotate(
     product_count=Count('products')
   ).get(pk=pk)
   serializer = CategorySerializer(category)
-  return Response(serializer.data)
+  return Response(serializer.data) """
 
 """ @api_view(["GET", "POST"])
 def view_products(request):
