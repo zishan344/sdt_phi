@@ -12,7 +12,7 @@ from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIVi
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from product.filters import ProductFilter
-
+from rest_framework.filters import SearchFilter,OrderingFilter
 # Create your views here.
 """ @api_view(['GET'])
 def view_categories(request):
@@ -134,8 +134,10 @@ class CategoryViewSet(ModelViewSet):
 class ProductViewSet(ModelViewSet):
   queryset = Product.objects.all()
   serializer_class = ProductSerializer
-  filter_backends = [DjangoFilterBackend]
+  filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
   filterset_class = ProductFilter
+  search_fields = ['name', 'description']
+  ordering_fields = ['price', 'updated_at']
 
   """ def get_queryset(self):
     queryset = Product.objects.all()
