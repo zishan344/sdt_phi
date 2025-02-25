@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView
 # Create your views here.
 """ @api_view(['GET'])
 def view_categories(request):
@@ -72,7 +73,7 @@ def view_products(request):
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED) """
 
-class ViewProducts(APIView):
+""" class ViewProducts(APIView):
   def get(self,request):
     products = Product.objects.select_related('category').all()
     serializer = ProductSerializer(
@@ -84,6 +85,17 @@ class ViewProducts(APIView):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+"""
+class ProductList(ListCreateAPIView):
+  queryset = Product.objects.select_related('category').all()
+  serializer_class = ProductSerializer
+"""   def get_queryset(self):
+    return Product.objects.select_related('category').all()
+
+  def get_serializer_class(self):
+    return ProductSerializer """
+  
 
 class ViewSpecificProduct(APIView):
   def get(self, request, pk):
