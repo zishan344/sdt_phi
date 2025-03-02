@@ -1,12 +1,10 @@
 from django.contrib import admin
-from django.urls import path, include,re_path
+from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include('api.urls')),
-    re_path(r'^auth/', include('djoser.urls.jwt')),
-    re_path(r'^auth/', include('djoser.urls')), 
+    path('api/v1/', include('api.urls')) 
 ] + debug_toolbar_urls()

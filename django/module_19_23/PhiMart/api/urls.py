@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 from product.views import ProductViewSet, CategoryViewSet, ReviewViewSet
@@ -23,7 +23,9 @@ product_router.register('reviews',ReviewViewSet,basename='product-review')
 urlpatterns = [
     path('', include(router.urls)),
     path('',include(product_router.urls)),
-    path('',include(cart_router.urls))
+    path('',include(cart_router.urls)),
+    re_path(r'^auth/', include('djoser.urls.jwt')),
+    re_path(r'^auth/', include('djoser.urls')),
     # path('products/',include('product.product_urls')),
     # path('categories/',include('product.category_urls'))
 ]
