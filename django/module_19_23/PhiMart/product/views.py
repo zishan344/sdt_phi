@@ -8,13 +8,12 @@ from django.shortcuts import get_object_or_404
 from product.serializers import ProductSerializer, CategorySerializer,ReviewSerializer
 from django.db.models import Count
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from product.filters import ProductFilter
 from rest_framework.filters import SearchFilter,OrderingFilter
 from product.paginations import DefaultPagination
-from rest_framework.permissions import IsAdminUser,IsAuthenticated,AllowAny
+from rest_framework.permissions import DjangoModelPermissions
 from api.permissions import IsAdminOrReadOnly
 class ViewCategorys(APIView):
   def get(self, request):
@@ -72,6 +71,7 @@ class ProductViewSet(ModelViewSet):
   ordering_fields = ['price', 'updated_at']
   # permission_classes = [IsAdminUser]
   permission_classes = [IsAdminOrReadOnly]
+  # permission_classes = [DjangoModelPermissions]
   """ def get_permissions(self):
     if self.request.method == "GET": 
       return [AllowAny()]
