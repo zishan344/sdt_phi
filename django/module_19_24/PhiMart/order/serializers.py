@@ -113,3 +113,6 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
                 {'detail':'You are not allowed to update this order'}
             )
         return super().update(instance,validated_data)
+
+class EmptySerializer(serializers.Serializer):
+    pass

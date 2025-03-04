@@ -1,11 +1,12 @@
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from order.serializers import CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer, OrderSerializer,CreateOrderSerializer, UpdateOrderSerializer
+from order.serializers import OrderSerializer as orderSz
+from order.serializers import CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer, OrderSerializer,CreateOrderSerializer, UpdateOrderSerializer,EmptySerializer
 from order.models import Cart, CartItem, Order
-
-
-
+from order.services import OrderService
+from rest_framework.response import Response
+from rest_framework.decorators import action
 # Create your views here.
 class CartViewSet(CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
     serializer_class = CartSerializer
@@ -41,14 +42,32 @@ class OrderViewset(ModelViewSet):
     http_method_names = ['get','post','delete','patch','head','options']
     # permission_classes = [IsAuthenticated]
     
+
+    @action(detail = True, methods= ['post'],permission_classes=[IsAuthenticated])
+    def cancel(self,request,pk=None):
+        order = self.get_object()
+        OrderService.cancel_order(order=order,user=request.user)
+        return Response({'status':'Order canceled'})
+    
+    @action(detail=True, methods=['patch'])
+    def update_status(self,request,pk=None):
+        order = self.get_object()
+        serializer = UpdateOrderSerializer(
+            order, data= request.data, partial=True
+        )
+        serializer.save()
+        return Response({'status':f'Order status updated to {request.data['status']}'})
+
     def get_permissions(self):
-        if self.request.method in ['DELETE']:
+        if self.action in ['update_status','destroy']:
             return [IsAdminUser()]
         return [IsAuthenticated()]
     def get_serializer_class(self):
-        if self.request.method == 'POST':
+        if self.action =='cancel':
+            return EmptySerializer
+        if self.action == 'create':
             return CreateOrderSerializer
-        elif self.request.method == 'PATCH':
+        elif self.action == 'update_status':
             return UpdateOrderSerializer
         return OrderSerializer
     
