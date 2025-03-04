@@ -97,3 +97,8 @@ class CreateOrderSerializer(serializers.Serializer):
         return order
     def to_representation(self, instance):
         return OrderItemSerializer(instance).data
+
+class UpdateOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['status']
