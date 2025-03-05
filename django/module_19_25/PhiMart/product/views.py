@@ -13,6 +13,7 @@ from api.permissions import IsAdminOrReadOnly
 from product.permissions import IsReviewAuthorOrReadonly
 from product.models import Category, Product,Review,ProductImage
 from product.serializers import ProductSerializer, CategorySerializer,ReviewSerializer,ProductImageSerializer
+from drf_yasg.utils import swagger_auto_schema
 class ViewCategorys(APIView):
   def get(self, request):
     categories = Category.objects.annotate(product_count = Count('products')).all()
@@ -75,9 +76,21 @@ class ProductViewSet(ModelViewSet):
   search_fields = ['name', 'description']
   ordering_fields = ['price', 'updated_at']
   permission_classes = [IsAdminOrReadOnly]
+
+  @swagger_auto_schema(operation_summary='Retrieve a list of prodcut')
   def list(self, request, *args, **kwargs):
     """Retrieve all the products"""
     return super().list(request, *args, **kwargs)
+
+  @swagger_auto_schema(
+      operation_summary='create Product by admin',
+      operation_description= 'This allow an admin to create a product',
+      requset_body = ProductSerializer,
+      responses = {
+        201:ProductSerializer,
+        400:"Bad Request"
+      }
+      )
   def create(self, request, *args, **kwargs):
     """Only authenticated admin can create product"""
     return super().create(request, *args, **kwargs)
