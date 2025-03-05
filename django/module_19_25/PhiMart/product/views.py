@@ -60,6 +60,13 @@ class CategoryViewSet(ModelViewSet):
 
 
 class ProductViewSet(ModelViewSet):
+  """ 
+  Api endpoint for managing products in the e-commerce store.
+  - Allows authenticated admin to create, update, and delete products
+  - Allows users to browse and filter product
+  - support searching by name, description, and category
+  - support ordering by price and update_at
+  """
   queryset = Product.objects.all()
   serializer_class = ProductSerializer
   filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -68,7 +75,12 @@ class ProductViewSet(ModelViewSet):
   search_fields = ['name', 'description']
   ordering_fields = ['price', 'updated_at']
   permission_classes = [IsAdminOrReadOnly]
-
+  def list(self, request, *args, **kwargs):
+    """Retrieve all the products"""
+    return super().list(request, *args, **kwargs)
+  def create(self, request, *args, **kwargs):
+    """Only authenticated admin can create product"""
+    return super().create(request, *args, **kwargs)
 class ProductImageViewSet(ModelViewSet):
   serializer_class = ProductImageSerializer
   permission_classes = [IsAdminOrReadOnly]
