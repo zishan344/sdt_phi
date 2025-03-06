@@ -1,0 +1,68 @@
+1 number question Answer
+create table Student (
+Roll char(4) primary key,
+Name varchar(50),
+Class int
+);
+
+CREATE TABLE Library (
+    bookName VARCHAR(50),
+    borrowedByStudentRoll CHAR(4),
+    FOREIGN KEY (borrowedByStudentRoll) REFERENCES Student(Roll)
+);
+
+CREATE TABLE Fees (
+    paidFee INT,
+    PaidFeeStudentRoll CHAR(4),
+    FOREIGN KEY (PaidFeeStudentRoll) REFERENCES Student(Roll)
+);
+
+2 number question Answer
+
+create table Student (
+Roll char(4) primary key NOT NULL check(Roll > 0),
+Name varchar(50) NOT NULL,
+Class int NOT NULL
+);
+
+
+
+CREATE TABLE Library (
+    bookName VARCHAR(50) NOT NULL,
+    borrowedByStudentRoll CHAR(4) NOT NULL,
+    FOREIGN KEY (borrowedByStudentRoll) REFERENCES Student(Roll)
+);
+
+CREATE TABLE Fees (
+    paidFee INT NOT NULL,
+    PaidFeeStudentRoll CHAR(4) NOT NULL,
+    FOREIGN KEY (PaidFeeStudentRoll) REFERENCES Student(Roll)
+);
+
+3 number question Answer
+
+Data consists of random numbers, words, or events without specific meaning. In contrast, information is a combination of multiple pieces of data that, when organized, provides meaningful something.
+
+4 number answer
+we need to enable database safe mode, bcs by default safe mode disabled. 
+code: 
+SET SQL_SAFE_UPDATES = 0;
+
+5 number answer
+SELECT distinct Department  from employee;
+
+6 number answer
+select LastName from employee order by age desc;
+
+7 number answer
+select LastName from employee where age > 30 and Department = 'Marketing';
+
+8 number answer
+Select * from employee;
+
+9 number answer
+select * from employee where FirstName like '%son%' or LastName like '%son%';
+
+10 number answer
+select * from employee where Department = 'Engineering';
+

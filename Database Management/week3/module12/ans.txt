@@ -1,0 +1,57 @@
+2. Write an SQL query to insert a new enrollment record for a student (e.g., StudentID 5) into the course with the highest credit hours.
+
+ans : INSERT INTO enrollment(StudentID, CourseID, EnrollmentDate) values(2, (SELECT CourseID FROM course where credits =( SELECT MAX(Credits) FROM course)), '2024-02-16')   
+
+
+3. Write an SQL UPDATE query to assign a new instructor to a course (e.g., CourseID 3) by updating the InstructorID
+
+ans: UPDATE course SET InstructorID = 2 where courseid =2;
+
+
+4. Write an SQL query to find the names of instructors who teach the most credits (total).
+
+SELECT name, sum(credits) as total_credit FROM course
+ join instructor ON course.InstructorID=instructor.InstructorID group by name ORDER BY total_credit DESC  limit 1;
+
+
+5. Write an SQL query to list all students who are enrolled in more than two courses
+ans: SELECT name, count(enrollment.studentid) as total FROM student JOIN enrollment ON student.studentId = enrollment.StudentID 
+group by enrollment.studentid having total >2;
+
+
+
+7. Explain the difference between GROUP BY and ORDER BY in SQL. Provide an example for each to illustrate.
+
+GROUP BY: Groups rows with the same values in specified columns. Used with aggregate functions like SUM, COUNT, etc.
+
+Example:
+SELECT Product, SUM(Amount) AS TotalSales
+FROM Sales
+GROUP BY Product;
+
+ORDER BY: Sorts the rows of the result set in ascending or descending order.
+
+Example:
+SELECT Product, Amount
+FROM Sales
+ORDER BY Amount DESC;
+
+8. Given a table Instructor with a Salary column, write an SQL query to find the second-highest salary among instructors
+Ans
+ SELECT * FROM instructor WHERE salary = (SELECT max(salary) FROM instructor where salary < (SELECT max(salary) FROM instructor));
+
+ 9. You have two tables, Instructor and Course. Use ON DELETE CASCADE on Course so that all courses are deleted when an instructor is removed.
+
+ CREATE TABLE Course (
+    CourseID INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL,
+    Credits INT NOT NULL,
+    InstructorID INT,
+    FOREIGN KEY (InstructorID) REFERENCES Instructor(InstructorID) ON DELETE CASCADE
+);
+ 
+DELETE FROM Instructor WHERE InstructorID = 1;
+
+10. Describe the most challenging topic you encountered in this course. Explain why it was challenging and how you overcame it.
+
+ANS: The most challenging topic I encountered in this exam was when I was working with foreign key constraints 9 number question.  when implementing ON DELETE CASCADE. Initially, I did not add any constraints to the  Course table and also did not set the ON DELETE CASCADE rule. I tried multiple times to update the table but  I faced issues that the foreign key constraint was not in place. After multiple attempts, I realized I had to first add the constraint to the InstructorID column and then set the ON DELETE CASCADE rule. However, I can’t solve this issue with updates, I am creating a new table from scratch, adding the constraint and ON DELETE CASCADE correctly from the beginning. finally worked on this approach and solved the problem.
