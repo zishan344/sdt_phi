@@ -4,6 +4,7 @@ from product.models import Product, Category, Review, ProductImage
 from django.contrib.auth import get_user_model
 
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
     class Meta:
         model = ProductImage
         fields = ['id','image']
