@@ -214,4 +214,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any inquiries, please contact [yourname@phimart.com](mailto:zishan@phimart.com).
+For any inquiries, please contact [zishan@phimart.com](mailto:zishan@phimart.com).
