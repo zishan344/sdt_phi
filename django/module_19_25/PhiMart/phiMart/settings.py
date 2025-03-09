@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'phiMart.wsgi.application'
+WSGI_APPLICATION = 'phiMart.wsgi.app'
 
 
 # Database
