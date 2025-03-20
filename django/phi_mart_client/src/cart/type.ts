@@ -2,8 +2,12 @@
 //  wrtie a type of cart ts
 
 export type CartItem = {
-  id: number;
   name: string;
   price: number;
   quantity: number;
+};
+
+export type CartForm = {
+  name: string;
+  price: number;
 };
