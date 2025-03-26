@@ -34,7 +34,7 @@ const Feature = () => {
         {features.map((feature, index) => (
           <div
             key={index}
-            className="flex flex-col items-center justify-center p-4 bg-white shadow-lg rounded-lg">
+            className="flex flex-col items-center justify-center p-4 bg-white">
             <div className="p-3 bg-red-100 rounded-full">{feature.icon}</div>
             <h3 className="text-xl font-semibold mt-4">{feature.title}</h3>
             <p className="text-center text-gray-500 mt-2">
