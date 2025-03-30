@@ -11,17 +11,20 @@ const ShopPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => {
     fetchProduct();
-  }, []);
-  const fetchProduct = () => {
+  }, [currentPage]);
+  const fetchProduct = async () => {
     setLoading(true);
-    apiClint
-      .get("/products")
-      .then((res) => {
-        setProducts(res.data.results);
-        setTotalPage(Math.ceil(res.data.count / res.data.results.length));
-      })
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
+    try {
+      const response = await apiClint.get(`/products/?page=${currentPage}`);
+      const data = await response.data;
+      // console.log(data);
+      setProducts(data.results);
+      setTotalPage(Math.ceil(data.count / data.results.length));
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div>
