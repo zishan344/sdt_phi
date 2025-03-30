@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import apiClint from "../services/api-clint";
 
 const useFetchProduct = (currentPage: number) => {
   const [products, setProducts] = useState([]);
@@ -10,10 +11,8 @@ const useFetchProduct = (currentPage: number) => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `https://api.example.com/products?page=${currentPage}`
-        );
-        const data = await response.json();
+        const response = await apiClint.get(`/products?page=${currentPage}`);
+        const data = await response.data;
         setProducts(data.results);
         setTotalPage(Math.ceil(data.count / data.results.length));
       } catch (error) {

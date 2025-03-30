@@ -1,33 +1,30 @@
-import React, { useEffect, useState } from "react";
-import apiClint from "../../services/api-clint";
+import { useState } from "react";
 import ProductList from "./ProductList";
 import Pagination from "./Pagination";
+import useFetchProduct from "../../hooks/useFetchProducts";
+import FilterSection from "./FilterSection";
 
 const ShopPage = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [totalPage, setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  useEffect(() => {
-    fetchProduct();
-  }, [currentPage]);
-  const fetchProduct = async () => {
-    setLoading(true);
-    try {
-      const response = await apiClint.get(`/products/?page=${currentPage}`);
-      const data = await response.data;
-      // console.log(data);
-      setProducts(data.results);
-      setTotalPage(Math.ceil(data.count / data.results.length));
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
+  const [priceRange, setPriceRange] = useState([0, 100]);
+  const { products, loading, error, totalPage } = useFetchProduct(currentPage);
+
+  const handlePriceChange = (index, value) => {
+    setPriceRange((prev) => {
+      const newRange = [...prev];
+      newRange[index] = value;
+      return newRange;
+    });
+    setCurrentPage(1);
   };
+
   return (
-    <div>
+    <div className="container mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-8">Shop Our Products</h1>
+      <FilterSection
+        handlePriceChange={handlePriceChange}
+        priceRange={priceRange}
+      />
       <ProductList products={products} loading={loading} error={error} />
       <Pagination
         totalPage={totalPage}
