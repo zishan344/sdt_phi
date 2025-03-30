@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 const Navbar = () => {
   return (
     <div className="navbar bg-base-100 shadow-sm">
@@ -5,7 +7,7 @@ const Navbar = () => {
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="<http://www.w3.org/2000/svg>"
               className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -27,7 +29,7 @@ const Navbar = () => {
             </li>
             <li>
               <a>Parent</a>
-              <ul className="p-2 ">
+              <ul className="p-2">
                 <li>
                   <a>Submenu 1</a>
                 </li>
@@ -37,11 +39,13 @@ const Navbar = () => {
               </ul>
             </li>
             <li>
-              <a>Item 3</a>
+              <Link to="/shop">Shop</Link>
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <Link to="/" className="btn btn-ghost text-xl">
+          daisyUI
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
@@ -62,7 +66,7 @@ const Navbar = () => {
             </details>
           </li>
           <li>
-            <a>Item 3</a>
+            <Link to="/shop">Shop</Link>
           </li>
         </ul>
       </div>
@@ -71,7 +75,7 @@ const Navbar = () => {
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <div className="indicator">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="<http://www.w3.org/2000/svg>"
                 className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
