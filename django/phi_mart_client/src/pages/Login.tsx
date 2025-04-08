@@ -79,7 +79,7 @@ const Login = () => {
               type="submit"
               className="btn btn-primary w-full"
               disabled={loading}>
-              {loading ? "Login" : "Loggin In ..."}
+              {loading ? "Loggin In ..." : "Login"}
             </button>
           </form>
           <div className="text-center mt-4">
