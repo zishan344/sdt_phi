@@ -2,12 +2,14 @@ import { useForm } from "react-hook-form";
 import useAuthContext from "../hooks/useAuthContext";
 import { Link, useNavigate } from "react-router";
 import ErrorAlert from "../components/ErrorAltert";
+import { useState } from "react";
 type FormValues = {
   email: string;
   password: string;
 };
 const Login = () => {
   const { user, errorMsg, loginUser } = useAuthContext();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const {
     register,
@@ -15,11 +17,14 @@ const Login = () => {
     formState: { errors },
   } = useForm<FormValues>();
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       await loginUser(data);
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -70,8 +75,11 @@ const Login = () => {
               )}
             </div>
 
-            <button type="submit" className="btn btn-primary w-full">
-              Login
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={loading}>
+              {loading ? "Login" : "Loggin In ..."}
             </button>
           </form>
           <div className="text-center mt-4">
