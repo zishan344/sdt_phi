@@ -6,6 +6,7 @@ type userLoginType = {
 };
 const useAuth = () => {
   const [user, setUser] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
   const getToken = () => {
     const token = localStorage.getItem("authTokens");
     return token ? JSON.parse(token) : null;
@@ -23,20 +24,25 @@ const useAuth = () => {
       });
       setUser(response.data);
     } catch (error) {
-      console.log("Error fetching User", error);
+      console.log("fetchUserProfile error", error);
     }
   };
   // Login User
   const loginUser = async (userData: userLoginType) => {
+    setErrorMsg("");
     try {
       const response = await apiClint.post("/auth/jwt/create/", userData);
       setAuthTokens(response.data);
       localStorage.setItem("authTokens", JSON.stringify(response.data));
+
+      // after Login
+      await fetchUserProfile();
     } catch (error) {
-      console.log("Login Error", error?.data?.response);
+      console.log(error);
+      setErrorMsg(error.response.data?.detail);
     }
   };
-  return { user, loginUser };
+  return { user, errorMsg, loginUser };
 };
 
 export default useAuth;
