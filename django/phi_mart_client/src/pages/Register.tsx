@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import useAuthContext from "../hooks/useAuthContext";
+import ErrorAlert from "../components/ErrorAltert";
 type RegisterFormValues = {
   first_name: string;
   last_name: string;
@@ -11,7 +12,7 @@ type RegisterFormValues = {
   confirm_password: string;
 };
 const Register = () => {
-  const { registerUser } = useAuthContext();
+  const { registerUser, errorMsg } = useAuthContext();
   const {
     register,
     handleSubmit,
@@ -31,6 +32,7 @@ const Register = () => {
     <div className="flex min-h-screen items-center justify-center px-4 py-12 bg-base-200">
       <div className="card w-full max-w-md bg-base-100 shadow-xl">
         <div className="card-body">
+          {errorMsg && <ErrorAlert error={errorMsg} />}
           <h2 className="card-title text-2xl font-bold">Sign Up</h2>
           <p className="text-base-content/70">
             Create an account to get started

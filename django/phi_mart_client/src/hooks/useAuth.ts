@@ -49,7 +49,13 @@ const useAuth = () => {
     try {
       await apiClint.post("/auth/users/", userData);
     } catch (error) {
-      console.log(error);
+      if (error.response && error.response.data) {
+        const errMessage = Object.values(error.response.data).flat().join("\n");
+        setErrorMsg(errMessage);
+      } else {
+        setErrorMsg("Registration Failed. Please Try Again");
+      }
+      // console.log(error);
     }
   };
   return { user, errorMsg, loginUser, registerUser };
