@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
+import useAuthContext from "../hooks/useAuthContext";
 type RegisterFormValues = {
   first_name: string;
   last_name: string;
@@ -10,15 +11,21 @@ type RegisterFormValues = {
   confirm_password: string;
 };
 const Register = () => {
+  const { registerUser } = useAuthContext();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<RegisterFormValues>();
+
   const onSubmit = async (data) => {
     delete data.confirm_password;
-    console.log(data);
+    try {
+      await registerUser(data);
+    } catch (error) {
+      console.log("registration flailed error: ", error);
+    }
   };
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 bg-base-200">

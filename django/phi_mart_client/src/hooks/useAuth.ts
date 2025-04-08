@@ -42,7 +42,17 @@ const useAuth = () => {
       setErrorMsg(error.response.data?.detail);
     }
   };
-  return { user, errorMsg, loginUser };
+
+  // register user
+  const registerUser = async (userData) => {
+    setErrorMsg("");
+    try {
+      await apiClint.post("/auth/users/", userData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return { user, errorMsg, loginUser, registerUser };
 };
 
 export default useAuth;
