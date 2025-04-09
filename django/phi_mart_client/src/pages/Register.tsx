@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import useAuthContext from "../hooks/useAuthContext";
 import ErrorAlert from "../components/ErrorAltert";
+import { useState } from "react";
 type RegisterFormValues = {
   first_name: string;
   last_name: string;
@@ -13,6 +14,8 @@ type RegisterFormValues = {
 };
 const Register = () => {
   const { registerUser, errorMsg } = useAuthContext();
+  const [successMsg, setSuccessMsg] = useState("");
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -23,16 +26,40 @@ const Register = () => {
   const onSubmit = async (data) => {
     delete data.confirm_password;
     try {
-      await registerUser(data);
+      const response = await registerUser(data);
+      console.log(response);
+      if (response.success) {
+        setSuccessMsg(response.message);
+        // setTimeout(() => navigate("/login"), 3000);
+      }
     } catch (error) {
-      console.log("registration flailed error: ", error);
+      console.log("Registration failed", error);
     }
   };
+
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 bg-base-200">
       <div className="card w-full max-w-md bg-base-100 shadow-xl">
         <div className="card-body">
           {errorMsg && <ErrorAlert error={errorMsg} />}
+          {successMsg && (
+            <div role="alert" className="alert alert-success">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{successMsg}</span>
+            </div>
+          )}
+
           <h2 className="card-title text-2xl font-bold">Sign Up</h2>
           <p className="text-base-content/70">
             Create an account to get started
@@ -49,7 +76,7 @@ const Register = () => {
                 placeholder="John"
                 className="input input-bordered w-full"
                 {...register("first_name", {
-                  required: "first_name is required",
+                  required: "First Name is Required",
                 })}
               />
               {errors.first_name && (
@@ -69,7 +96,7 @@ const Register = () => {
                 placeholder="Doe"
                 className="input input-bordered w-full"
                 {...register("last_name", {
-                  required: "last_name is required",
+                  required: "Last Name is Required",
                 })}
               />
               {errors.last_name && (
@@ -88,13 +115,16 @@ const Register = () => {
                 type="email"
                 placeholder="name@example.com"
                 className="input input-bordered w-full"
-                {...register("email", { required: "email is required" })}
+                {...register("email", {
+                  required: "Email is Required",
+                })}
               />
               {errors.email && (
                 <span className="label-text-alt text-error">
                   {errors.email.message}
                 </span>
               )}
+              {/* <p>Email: {watch("email")}</p> */}
             </div>
 
             <div className="form-control">
@@ -108,11 +138,6 @@ const Register = () => {
                 className="input input-bordered w-full"
                 {...register("address")}
               />
-              {errors.address && (
-                <span className="label-text-alt text-error">
-                  {errors.address.message}
-                </span>
-              )}
             </div>
 
             <div className="form-control">
@@ -124,15 +149,8 @@ const Register = () => {
                 type="text"
                 placeholder="0123456789"
                 className="input input-bordered w-full"
-                {...register("phone_number", {
-                  required: "phone number is required",
-                })}
+                {...register("phone_number")}
               />
-              {errors.phone_number && (
-                <span className="label-text-alt text-error">
-                  {errors.phone_number.message}
-                </span>
-              )}
             </div>
 
             <div className="form-control">
@@ -145,10 +163,10 @@ const Register = () => {
                 placeholder="••••••••"
                 className="input input-bordered w-full"
                 {...register("password", {
-                  required: "password is required",
+                  required: "Password is required",
                   minLength: {
                     value: 8,
-                    message: "password must be at least 8 character",
+                    message: "Password must be at least 8 characters",
                   },
                 })}
               />
@@ -169,7 +187,7 @@ const Register = () => {
                 placeholder="••••••••"
                 className="input input-bordered w-full"
                 {...register("confirm_password", {
-                  required: "confirm Password is required",
+                  required: "Confirm Password is required",
                   validate: (value) =>
                     value === watch("password") || "Password do not match",
                 })}
@@ -182,7 +200,7 @@ const Register = () => {
             </div>
 
             <button type="submit" className="btn btn-primary w-full">
-              Sign Up
+              Sing Up
             </button>
           </form>
 

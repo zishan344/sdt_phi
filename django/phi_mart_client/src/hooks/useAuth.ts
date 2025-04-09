@@ -7,6 +7,7 @@ type userLoginType = {
 const useAuth = () => {
   const [user, setUser] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+
   const getToken = () => {
     const token = localStorage.getItem("authTokens");
     return token ? JSON.parse(token) : null;
@@ -48,17 +49,33 @@ const useAuth = () => {
     setErrorMsg("");
     try {
       await apiClint.post("/auth/users/", userData);
+      return {
+        success: true,
+        message:
+          "Registration successfull. Check your email to activate your account.",
+      };
     } catch (error) {
       if (error.response && error.response.data) {
-        const errMessage = Object.values(error.response.data).flat().join("\n");
-        setErrorMsg(errMessage);
-      } else {
-        setErrorMsg("Registration Failed. Please Try Again");
+        const errorMessage = Object.values(error.response.data)
+          .flat()
+          .join("\n");
+        setErrorMsg(errorMessage);
+        return { success: false, message: errorMessage };
       }
-      // console.log(error);
+      setErrorMsg("Registratation failed. Please try again");
+      return {
+        success: false,
+        message: "Registratation failed. Please try again",
+      };
     }
   };
-  return { user, errorMsg, loginUser, registerUser };
+  // logout user
+  const logoutUser = () => {
+    setAuthTokens(null);
+    setUser(null);
+    localStorage.removeItem("authTokens");
+  };
+  return { user, errorMsg, loginUser, registerUser, logoutUser };
 };
 
 export default useAuth;
