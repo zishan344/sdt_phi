@@ -17,6 +17,24 @@ const useAuth = () => {
   useEffect(() => {
     if (authTokens) fetchUserProfile();
   }, [authTokens]);
+
+  const handleAPIError = (
+    error,
+    defaultMessage = "Something Went Wrong! Try Again"
+  ) => {
+    console.log(error);
+    if (error.response && error.response.data) {
+      const errorMessage = Object.values(error.response.data).flat().join("\n");
+      setErrorMsg(errorMsg);
+      return { success: false, message: errorMessage };
+    }
+    setErrorMsg(defaultMessage);
+    return {
+      success: false,
+      message: defaultMessage,
+    };
+  };
+
   // Fetch user profile
   const fetchUserProfile = async () => {
     try {
@@ -28,6 +46,35 @@ const useAuth = () => {
       console.log("fetchUserProfile error", error);
     }
   };
+
+  // Update User Profile
+  const updateUserProfile = async (data) => {
+    setErrorMsg("");
+    try {
+      await apiClint.put("/auth/users/me", data, {
+        headers: {
+          Authorization: `JWT ${authTokens?.access}`,
+        },
+      });
+    } catch (error) {
+      return handleAPIError(error);
+    }
+  };
+
+  //password change
+  const changePassword = async (data) => {
+    setErrorMsg("");
+    try {
+      await apiClint.post("/auth/users/set_password/", data, {
+        headers: {
+          Authorization: `JWT ${authTokens?.access}`,
+        },
+      });
+    } catch (error) {
+      return handleAPIError(error);
+    }
+  };
+
   // Login User
   const loginUser = async (userData: userLoginType) => {
     setErrorMsg("");
@@ -75,7 +122,15 @@ const useAuth = () => {
     setUser(null);
     localStorage.removeItem("authTokens");
   };
-  return { user, errorMsg, loginUser, registerUser, logoutUser };
+  return {
+    user,
+    errorMsg,
+    loginUser,
+    registerUser,
+    logoutUser,
+    updateUserProfile,
+    changePassword,
+  };
 };
 
 export default useAuth;
