@@ -9,17 +9,22 @@ import PrivateRoute from "../components/PrivateRoute";
 import ActivateAccount from "../components/Registration/ActivateAccount";
 import DashboardLayout from "../layout/DashboardLayout";
 import Profile from "../pages/Profile";
+import ProductDetail from "../pages/ProductDetail";
 
 const AppRoute = () => {
   return (
     <Routes>
+      {/* Public Route */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="shop" element={<Shop />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="activate/:uid/:token" element={<ActivateAccount />} />
+        <Route path="shop/:id" element={<ProductDetail />} />
       </Route>
+
+      {/* Private Route */}
       <Route
         path="dashboard"
         element={
