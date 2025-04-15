@@ -10,6 +10,7 @@ import ActivateAccount from "../components/Registration/ActivateAccount";
 import DashboardLayout from "../layout/DashboardLayout";
 import Profile from "../pages/Profile";
 import ProductDetail from "../pages/ProductDetail";
+import Cart from "../pages/Cart";
 
 const AppRoute = () => {
   return (
@@ -34,6 +35,7 @@ const AppRoute = () => {
         }>
         <Route index element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="cart" element={<Cart />} />
       </Route>
     </Routes>
   );
