@@ -8,6 +8,7 @@ import apiClint from "../services/api-clint";
 const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const { id } = useParams();
   useEffect(() => {
     setLoading(true);

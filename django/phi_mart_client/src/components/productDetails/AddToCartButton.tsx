@@ -1,34 +1,35 @@
 import { useState } from "react";
 import { FaCheck, FaShoppingCart } from "react-icons/fa";
 import { FaMinus, FaPlus } from "react-icons/fa6";
+import useCartContext from "../../hooks/useCartContext";
 
 const AddToCartButton = ({ product }) => {
-  const [Quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-
+  const { AddCartItems } = useCartContext();
   const increaseQuantity = () => {
-    if (Quantity < product.stock) {
-      setQuantity(Quantity + 1);
+    if (quantity < product.stock) {
+      setQuantity(quantity + 1);
     }
   };
 
   const decreaseQuantity = () => {
-    if (Quantity > 1) {
-      setQuantity(Quantity - 1);
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
     }
   };
 
-  const addToCart = () => {
+  const addToCart = async () => {
     setIsAdding(true);
-    setTimeout(() => {
-      setIsAdding(false);
+    try {
+      await AddCartItems(product.id, quantity);
       setIsAdded(true);
-
-      setTimeout(() => {
-        setIsAdded(false);
-      }, 2000);
-    }, 1000);
+      setIsAdding(false);
+    } catch (error) {
+      console.log(error);
+      setIsAdding(false);
+    }
   };
 
   return (
@@ -37,12 +38,12 @@ const AddToCartButton = ({ product }) => {
         <button
           className="btn btn-outline join-item"
           onClick={decreaseQuantity}
-          disabled={Quantity <= 1}>
+          disabled={quantity <= 1}>
           <FaMinus className="h-4 w-4" />
         </button>
         <input
           type="number"
-          value={Quantity}
+          value={quantity}
           min={1}
           max={product?.stock}
           className="input input-bordered join-item w-16 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
@@ -50,7 +51,7 @@ const AddToCartButton = ({ product }) => {
         <button
           className="btn btn-outline join-item"
           onClick={increaseQuantity}
-          disabled={Quantity >= product.stock}>
+          disabled={quantity >= product.stock}>
           <FaPlus className="h-4 w-4" />
         </button>
       </div>
