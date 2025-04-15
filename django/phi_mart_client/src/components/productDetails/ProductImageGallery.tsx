@@ -7,7 +7,7 @@ import { Navigation, Thumbs } from "swiper/modules";
 import defaultImage from "../../assets/default_product.jpg";
 const ProductImageGallery = ({ images, ProductName }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  const displayImages = images.length > 0 ? images : [defaultImage];
+  const displayImages = images.length > 0 ? images : [{ image: defaultImage }];
   return (
     <div className="rounded-lg border overflow-hidden">
       <Swiper
@@ -20,11 +20,13 @@ const ProductImageGallery = ({ images, ProductName }) => {
         className="product-main-slider">
         {displayImages.map((image, index) => (
           <SwiperSlide key={index}>
-            <img
-              className="h-full w-full object-contain"
-              src={image.image}
-              alt={ProductName}
-            />
+            <div className="aspect-square bg-base-100">
+              <img
+                className="h-full w-full object-contain"
+                src={image.image}
+                alt={ProductName}
+              />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
