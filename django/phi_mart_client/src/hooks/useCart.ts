@@ -1,5 +1,6 @@
 import { useState } from "react";
 import apiClint from "../services/api-clint";
+import authApiClient from "../services/auth-api-client";
 
 const useCart = () => {
   const [authToken, setAuthToken] = useState(
@@ -10,13 +11,7 @@ const useCart = () => {
   const createOrGetCart = async () => {
     console.log(authToken);
     try {
-      const response = await apiClint.post(
-        "/carts/",
-        {},
-        {
-          headers: { Authorization: `JWT ${authToken}` },
-        }
-      );
+      const response = await authApiClient.post("/carts/");
       if (!cartId) {
         localStorage.setItem("cartId", response.data.id);
         setCart(response.data);
