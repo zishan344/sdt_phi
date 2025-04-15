@@ -2,7 +2,6 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
-import CarouselSlide from "../carousel/CarouselSlide";
 import { useState } from "react";
 import { Navigation, Thumbs } from "swiper/modules";
 import defaultImage from "../../assets/default_product.jpg";

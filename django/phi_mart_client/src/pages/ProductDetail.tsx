@@ -1,3 +1,4 @@
+import AddToCartButton from "../components/productDetails/AddToCartButton";
 import ProductImageGallery from "../components/productDetails/ProductImageGallery";
 
 const ProductDetail = () => {
@@ -23,8 +24,16 @@ const ProductDetail = () => {
     ],
   };
   return (
-    <div>
-      <ProductImageGallery ProductName={product.name} images={product.images} />
+    <div className="w-3/4 mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:gap-12">
+        <ProductImageGallery
+          ProductName={product.name}
+          images={product.images}
+        />
+        <div className="mt-auto">
+          <AddToCartButton product={product} />
+        </div>
+      </div>
     </div>
   );
 };
