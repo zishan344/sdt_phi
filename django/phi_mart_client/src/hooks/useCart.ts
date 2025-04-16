@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import apiClint from "../services/api-clint";
 import authApiClient from "../services/auth-api-client";
 
@@ -8,41 +8,41 @@ const useCart = () => {
   );
   const [cart, setCart] = useState(null);
   const [cartId, setCartId] = useState(() => localStorage.getItem("cartId"));
-  const createOrGetCart = async () => {
-    console.log(authToken);
+  const [loading, setLoading] = useState(false);
+  const createOrGetCart = useCallback(async () => {
+    setLoading(true);
     try {
+      console.log(authToken);
       const response = await authApiClient.post("/carts/");
       if (!cartId) {
         localStorage.setItem("cartId", response.data.id);
-        setCart(response.data);
         setCartId(response.data.id);
       }
+      setCart(response.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [authToken, cartId]);
 
-  const AddCartItems = async (product_id, quantity) => {
-    if (!cartId) await createOrGetCart();
-    console.log("Products", { product_id, quantity });
-    try {
-      const response = await apiClint.post(
-        `/carts/${cartId}/items/`,
-        {
+  const AddCartItems = useCallback(
+    async (product_id, quantity) => {
+      if (!cartId) await createOrGetCart();
+      console.log("Products", { product_id, quantity });
+      try {
+        const response = await authApiClient.post(`/carts/${cartId}/items/`, {
           product_id,
           quantity,
-        },
-        {
-          headers: { Authorization: `JWT ${authToken}` },
-        }
-      );
-      console.log(response);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+        });
+        console.log(response);
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [cartId, createOrGetCart]
+  );
   return { cart, createOrGetCart, AddCartItems };
 };
 
