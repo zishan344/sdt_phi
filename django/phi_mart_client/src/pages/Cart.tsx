@@ -22,16 +22,26 @@ const Cart = () => {
 
   const handleUpdateQuantity = async (itemId, newQuantity) => {
     const prevLocalCartCopy = localCart;
-    setLocalCart((prevLocalCart) => ({
-      ...prevLocalCart,
-      items: prevLocalCart.items.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      ),
-      total_price: prevLocalCart.items.reduce(
-        (sum, item) => sum + item.total_price,
-        0
-      ),
-    }));
+
+    setLocalCart((prevLocalCart) => {
+      const updateItems = prevLocalCart.items.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              quantity: newQuantity,
+              total_price: item.product.price * newQuantity,
+            }
+          : item
+      );
+      return {
+        ...prevLocalCart,
+        items: updateItems,
+        total_price: updateItems.reduce(
+          (sum, item) => sum + item.total_price,
+          0
+        ),
+      };
+    });
     try {
       await updateCartItemQuantity(itemId, newQuantity);
     } catch (error) {
@@ -39,11 +49,23 @@ const Cart = () => {
       setLocalCart(prevLocalCartCopy);
     }
   };
+
   const handleRemoveItem = async (itemId) => {
-    setLocalCart((prevLocalCart) => ({
-      ...prevLocalCart,
-      items: prevLocalCart.items.filter((item) => item.id !== itemId),
-    }));
+    setLocalCart((prevLocalCart) => {
+      const updatedItems = prevLocalCart.items.filter(
+        (item) => item.id != itemId
+      );
+
+      return {
+        ...prevLocalCart,
+        items: updatedItems,
+        total_price: updatedItems.reduce(
+          (sum, item) => sum + item.total_price,
+          0
+        ),
+      };
+    });
+
     try {
       await deleteCartItems(itemId);
     } catch (error) {
