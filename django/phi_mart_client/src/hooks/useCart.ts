@@ -9,6 +9,7 @@ const useCart = () => {
   const [cart, setCart] = useState(null);
   const [cartId, setCartId] = useState(() => localStorage.getItem("cartId"));
   const [loading, setLoading] = useState(false);
+
   const createOrGetCart = useCallback(async () => {
     setLoading(true);
     try {
@@ -49,15 +50,12 @@ const useCart = () => {
 
   const updateCartItemQuantity = useCallback(
     async (itemId, quantity) => {
-      setLoading(true);
       try {
         await authApiClient.patch(`/carts/${cartId}/items/${itemId}/`, {
           quantity,
         });
       } catch (error) {
         console.log("Error updating Cart items", error);
-      } finally {
-        setLoading(false);
       }
     },
     [cartId]
