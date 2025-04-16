@@ -28,6 +28,7 @@ const useCart = () => {
 
   const AddCartItems = useCallback(
     async (product_id, quantity) => {
+      setLoading(true);
       if (!cartId) await createOrGetCart();
       console.log("Products", { product_id, quantity });
       try {
@@ -39,11 +40,35 @@ const useCart = () => {
         return response.data;
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     },
     [cartId, createOrGetCart]
   );
-  return { cart, createOrGetCart, AddCartItems };
+
+  const updateCartItemQuantity = useCallback(
+    async (itemId, quantity) => {
+      setLoading(true);
+      try {
+        await authApiClient.patch(`/carts/${cartId}/items/${itemId}/`, {
+          quantity,
+        });
+      } catch (error) {
+        console.log("Error updating Cart items", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [cartId]
+  );
+  return {
+    cart,
+    createOrGetCart,
+    AddCartItems,
+    updateCartItemQuantity,
+    loading,
+  };
 };
 
 export default useCart;
