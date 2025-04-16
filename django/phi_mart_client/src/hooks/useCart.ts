@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import apiClint from "../services/api-clint";
 import authApiClient from "../services/auth-api-client";
 
 const useCart = () => {
@@ -60,12 +59,24 @@ const useCart = () => {
     },
     [cartId]
   );
+
+  const deleteCartItems = useCallback(
+    async (itemId) => {
+      try {
+        await authApiClient.delete(`/carts/${cartId}/items/${itemId}/`);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [cartId]
+  );
   return {
     cart,
     createOrGetCart,
     AddCartItems,
     updateCartItemQuantity,
     loading,
+    deleteCartItems,
   };
 };
 
