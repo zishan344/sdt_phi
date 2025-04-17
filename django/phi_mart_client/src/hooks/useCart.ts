@@ -84,6 +84,7 @@ const useCart = () => {
     AddCartItems,
     updateCartItemQuantity,
     loading,
+    cartId,
     deleteCartItems,
   };
 };

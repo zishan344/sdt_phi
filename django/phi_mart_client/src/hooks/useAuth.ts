@@ -85,9 +85,11 @@ const useAuth = () => {
 
       // after Login
       await fetchUserProfile();
+      return { success: true };
     } catch (error) {
       console.log(error);
       setErrorMsg(error.response.data?.detail);
+      return { success: false };
     }
   };
 
@@ -121,6 +123,7 @@ const useAuth = () => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
+    localStorage.removeItem("cartid");
   };
   return {
     user,
