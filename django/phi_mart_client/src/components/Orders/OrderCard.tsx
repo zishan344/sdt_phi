@@ -1,28 +1,11 @@
-{
-  /************ New Added ****************/
-}
 import { useState } from "react";
-{
-  /************ upto this ****************/
-}
-
 import useAuthContext from "../../hooks/useAuthContext";
 import OrderTable from "./OrderTable";
 import authApiClient from "../../services/auth-api-client";
 
-{
-  /************ Updated ****************/
-}
 const OrderCard = ({ order, onCancel }) => {
-  {
-    /************ upto this ****************/
-  }
-
   const { user } = useAuthContext();
-
-  {
-    /************ New Added ****************/
-  }
+  console.log(user);
   const [status, setStatus] = useState(order.status);
 
   const handleStatusChange = async (event) => {
@@ -41,9 +24,6 @@ const OrderCard = ({ order, onCancel }) => {
       console.log(error);
     }
   };
-  {
-    /************ upto this ****************/
-  }
 
   return (
     <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
@@ -53,7 +33,6 @@ const OrderCard = ({ order, onCancel }) => {
           <p className="text-gray-600 text-sm">Placed on {order.created_at}</p>
         </div>
         <div className="flex gap-2">
-          {/************ New Added ****************/}
           {user.is_staff ? (
             <select
               value={status}
@@ -82,7 +61,6 @@ const OrderCard = ({ order, onCancel }) => {
                 Cancel
               </button>
             )}
-          {/************ upto this ****************/}
         </div>
       </div>
       <div className="p-6">

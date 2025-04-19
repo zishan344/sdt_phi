@@ -1,4 +1,3 @@
-import React from "react";
 import authApiClient from "../../services/auth-api-client";
 
 const CartSummary = ({ totalPrice, itemCount, cartId }) => {
@@ -9,9 +8,12 @@ const CartSummary = ({ totalPrice, itemCount, cartId }) => {
   const deleteCart = () => {
     localStorage.removeItem("cartId");
   };
+
   const createOrder = async () => {
     try {
+      console.log("order is running");
       const order = await authApiClient.post("/orders/", { cart_id: cartId });
+      console.log("my order", order);
       if (order.status === 201) {
         deleteCart();
         alert("Order placed successfully");
@@ -20,6 +22,7 @@ const CartSummary = ({ totalPrice, itemCount, cartId }) => {
       console.log(error);
     }
   };
+
   return (
     <div className="card bg-base-100 shadow-xl">
       <div className="card-body">
@@ -46,8 +49,8 @@ const CartSummary = ({ totalPrice, itemCount, cartId }) => {
         </div>
         <div className="card-actions justify-end mt-4">
           <button
-            onClick={createOrder}
             disabled={itemCount === 0}
+            onClick={createOrder}
             className="btn btn-primary w-full">
             Proceed to Checkout
           </button>

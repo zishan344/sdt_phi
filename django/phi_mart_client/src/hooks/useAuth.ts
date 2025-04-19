@@ -123,7 +123,7 @@ const useAuth = () => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
-    localStorage.removeItem("cartid");
+    localStorage.removeItem("cartId");
   };
   return {
     user,
