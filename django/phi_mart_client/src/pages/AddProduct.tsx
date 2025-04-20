@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import apiClint from "../services/api-clint";
 import authApiClient from "../services/auth-api-client";
+import { ProductData } from "../allInterface";
 
 const AddProduct = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<ProductData>();
 
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
+    []
+  );
 
-  const [productId, setProductId] = useState(null);
-  const [previewImages, setPreviewImages] = useState([]);
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [productId, setProductId] = useState<number | null>(null);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [images, setImages] = useState<File[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Fetch Categories
   useEffect(() => {
@@ -26,7 +29,7 @@ const AddProduct = () => {
   }, []);
 
   // Submit Product Details
-  const handleProductAdd = async (data) => {
+  const handleProductAdd = async (data: ProductData): Promise<void> => {
     try {
       const productRes = await authApiClient.post("/products/", data);
 
@@ -37,9 +40,8 @@ const AddProduct = () => {
   };
 
   // Handle Image Change
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    console.log(files);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
     setImages(files);
     setPreviewImages(files.map((file) => URL.createObjectURL(file)));
   };
@@ -96,11 +98,10 @@ const AddProduct = () => {
             <input
               type="text"
               {...register("price", {
-                required: "This Field is required",
-                validate: (value) => {
-                  const parsedValue = parseFloat(value);
-                  return !isNaN(parsedValue) || "Please enter a valid number!";
-                },
+                required: "Price is required",
+                valueAsNumber: true,
+                validate: (value) =>
+                  value > 0 || "Price must be greater than 0",
               })}
               className="input input-bordered w-full"
               placeholder="Price"

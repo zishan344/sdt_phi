@@ -5,9 +5,10 @@ import apiClint from "../services/api-clint";
 import ReviewSection from "../components/Reviews/ReviewSection";
 import ProductImageGallery from "../components/productDetails/ProductImageGallery";
 import AddToCartButton from "../components/productDetails/AddToCartButton";
+import { ProductDetails } from "../allInterface";
 
 const ProductDetail = () => {
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<ProductDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
@@ -15,7 +16,6 @@ const ProductDetail = () => {
     setLoading(true);
     apiClint.get(`/products/${id}/`).then((res) => {
       setProduct(res.data);
-      console.log(res.data);
       setLoading(false);
     });
   }, [id]);
