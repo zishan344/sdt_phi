@@ -12,7 +12,7 @@ const StarRating = ({ onChange, rating }) => {
             onClick={() => onChange(value)}
             className={`cursor-pointer transition-colors duration-200 ${
               value <= rating ? "text-yellow-300" : "text-gray-300"
-            } hover:text-yellow-300`}
+            }  hover:text-yellow-300`}
           />
         );
       })}

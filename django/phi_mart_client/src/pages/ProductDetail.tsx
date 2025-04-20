@@ -1,16 +1,16 @@
-import { Suspense, useEffect, useState } from "react";
-import AddToCartButton from "../components/productDetails/AddToCartButton";
-import ProductImageGallery from "../components/productDetails/ProductImageGallery";
 import { Link, useParams } from "react-router";
 import { FaArrowLeft } from "react-icons/fa";
+import { Suspense, useEffect, useState } from "react";
 import apiClint from "../services/api-clint";
 import ReviewSection from "../components/Reviews/ReviewSection";
+import ProductImageGallery from "../components/productDetails/ProductImageGallery";
+import AddToCartButton from "../components/productDetails/AddToCartButton";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const { id } = useParams();
+
   useEffect(() => {
     setLoading(true);
     apiClint.get(`/products/${id}/`).then((res) => {
@@ -19,8 +19,10 @@ const ProductDetail = () => {
       setLoading(false);
     });
   }, [id]);
+
   if (loading) return <div>Loading...</div>;
   if (!product) return <div>Product Not Found...</div>;
+
   return (
     <div className="w-3/4 mx-auto px-4 py-8">
       <div className="mb-6">
@@ -39,7 +41,7 @@ const ProductDetail = () => {
           }>
           <ProductImageGallery
             images={product?.images}
-            productName={product.name}
+            ProductName={product.name}
           />
         </Suspense>
         <div className="flex flex-col">
@@ -85,9 +87,7 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-      <div>
-        <ReviewSection />
-      </div>
+      <ReviewSection />
     </div>
   );
 };
