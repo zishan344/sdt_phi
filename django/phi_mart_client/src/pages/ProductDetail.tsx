@@ -4,6 +4,7 @@ import ProductImageGallery from "../components/productDetails/ProductImageGaller
 import { Link, useParams } from "react-router";
 import { FaArrowLeft } from "react-icons/fa";
 import apiClint from "../services/api-clint";
+import ReviewSection from "../components/Reviews/ReviewSection";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState(null);
@@ -83,6 +84,9 @@ const ProductDetail = () => {
             <AddToCartButton product={product} />
           </div>
         </div>
+      </div>
+      <div>
+        <ReviewSection />
       </div>
     </div>
   );
